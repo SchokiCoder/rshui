@@ -31,7 +31,7 @@ starting where the primary goal-roadmap ended.
 - no dependcies on libraries other than std and core
 - building the package by editing config.rs and Cargo.toml and running cargo
 - provide secondary goal updates as patches when not that necessary
-- no file level `use` except for std::string::String
+- no file level `use` except for local files and std::string::String
 - no use of `impl` (thus no oop, traits or operator overloading)
 - no closures
 - no `unsafe`

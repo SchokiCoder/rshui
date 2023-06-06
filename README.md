@@ -16,4 +16,5 @@ This is a rewrite of my [hui](https://github.com/SchokiCoder/hui) in Rust.
 It follows semantic versioning like the original but the minor and major number
 depend on the features implemented.  
 If rshui has the same features as hui 1.2.X then rshui is v1.2.X.  
-Patches are mostly independent of each other, therefore they are not shared.  
+Bugfixes are likely independent of each other, therefore the patchnumber is not
+shared.  

@@ -1,0 +1,18 @@
+{
+	-README.md: remove ambigous patch statement		v
+	-goals.md: add exception to file-level `use`		v
+	 limitation for local files
+
+	-add header						v
+	-add title						v
+	-add menu draw						v
+	-add keyboard input					.
+	-add menu cursor and up and down navigation		.
+	-add quit via ctl + c and 'q'				.
+	-add multline feedback					.
+	-add feedback line					.
+	-add left and right menu navigation			.
+	-...
+
+	-set version to 0.1.0					.
+}
