@@ -37,6 +37,7 @@ starting where the primary goal-roadmap ended.
 - no `unsafe`
 - this rewrite must strife to implement the same features as the original before
   it can implement new ones in itself
+- no building via cargo
 
 # Roadmap
 

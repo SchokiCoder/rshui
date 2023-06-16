@@ -12,7 +12,7 @@
 	-add title						v
 	-add menu draw						v
 
-	-consider limitation: no cargo				.
+	-remove cargo						v
 
 	-add keyboard input and close via ctl + 'c' and 'q'	.
 	-add multiline-feedback					.
@@ -22,6 +22,10 @@
 	-add command line enter via ':'				.
 	-add command line leave via ctl + 'c' and enter		.
 	-add config for text fore- and background		.
+	
+	-look at asm to find more things that need to be	.
+	 set for rustc
+	 `rustc --emit asm`
 
 	-set version to 0.1.0					.
 }

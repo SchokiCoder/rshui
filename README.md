@@ -19,7 +19,7 @@ If rshui has the same features as hui 1.2.X then rshui is v1.2.X.
 Bugfixes are likely independent of each other, therefore the patchnumber is not
 shared.  
 
-# A suckless Rust app?
+## A suckless Rust app?
 
 Yes, inspired by suckless and my original implementation.  
 The Rust compiler and language design is very likely not approved by suckless
