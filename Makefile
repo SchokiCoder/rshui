@@ -1,18 +1,19 @@
-APP_NAME = rshui
-VERSION = 0.0.0
+VERSION=0.0.0
 
-RUSTC = rustc
-COPTS = --crate-type bin --crate-name ${APP_NAME}
-REL_COPTS = -C opt-level=s -C panic=abort -C overflow-checks=no
+RUSTC=rustc
+COPTS=--crate-type bin --crate-name rshui
+REL_COPTS=-C opt-level=s -C panic=abort -C overflow-checks=no
 
-release:
-	$(RUSTC) ${COPTS} ${REL_COPTS} -o ${APP_NAME} rshui.rs
+rshui: rshui.rs menu.rs config.rs
+	$(RUSTC) $(COPTS) $(REL_COPTS) -o $@ $<
 
-debug:
-	$(RUSTC) ${COPTS} -o ${APP_NAME} -g rshui.rs
+d_rshui: rshui.rs menu.rs config.rs
+	$(RUSTC) $(COPTS) -g -o $@ $<
 
-asm:
-	$(RUSTC) ${COPTS} ${REL_COPTS} -o ${APP_NAME}.asm --emit asm rshui.rs
+rshui.s: rshui.rs menu.rs config.rs
+	$(RUSTC) $(COPTS) $(REL_COPTS) -o $@ --emit asm $<
 
 clean:
-	rm -f ${APP_NAME}
+	rm -f hui
+	rm -f d_hui
+	rm -f rshui.s

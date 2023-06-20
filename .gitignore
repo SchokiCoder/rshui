@@ -1,4 +1,3 @@
-Cargo.lock
-target/*
 rshui
-rshui.asm
+d_rshui
+rshui.s
