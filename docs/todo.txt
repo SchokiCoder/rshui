@@ -14,7 +14,11 @@
 
 	-remove cargo						v
 
-	-add keyboard input and close via ctl + 'c' and 'q'	.
+	-add keyboard input and close via ctl + 'c' and 'q'	v
+	-add cursor hide/show					v
+	-add terminal clear					v
+	-add raw terminal mode					.
+	 (see extern at top for what was in C)
 	-add multiline-feedback					.
 	-add feedback line					.
 	-add menu entry cursor (up and down)			.

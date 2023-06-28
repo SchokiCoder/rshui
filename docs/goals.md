@@ -34,7 +34,7 @@ starting where the primary goal-roadmap ended.
 - no file level `use` except for local files and std::string::String
 - no use of `impl` (thus no oop, traits or operator overloading)
 - no closures
-- no `unsafe`
+- no `unsafe`, except to create safe wrappers around C ffi
 - this rewrite must strife to implement the same features as the original before
   it can implement new ones in itself
 - no building via cargo
