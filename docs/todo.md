@@ -29,4 +29,7 @@
 - look at asm to find more things that need to be set for rustc
   `rustc --emit asm`
 
+- the license into binary at compile time thing can be easily done with include
+  macro?
+- use shell scripts for building and deploying
 - set version to 0.1

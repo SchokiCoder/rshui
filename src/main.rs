@@ -6,10 +6,11 @@
 mod menu;
 mod config;
 
-use std::os::unix::io::FromRawFd;
-
 use crate::menu::*;
 use crate::config::*;
+
+use termion::raw::IntoRawMode;
+use termion::cursor::HideCursor;
 
 const SIGINT:  char = '\x03';
 const SIGTSTP: char = '\x32';
@@ -17,19 +18,6 @@ const SIGTSTP: char = '\x32';
 const SEQ_CLEAR:     &str = "\x1b[2J";
 const SEQ_CRSR_HIDE: &str = "\033[?25l";
 const SEQ_CRSR_SHOW: &str = "\033[?25h";
-
-fn term_set_raw() this is c code, translate with std::unix
-{
-	struct termios raw;
-	
-	setbuf(stdout, NULL);
-	tcgetattr(STDIN_FILENO, &previous_terminal_settings);
-	raw = previous_terminal_settings;
-	raw.c_lflag &= ~(ECHO | ICANON | ISIG);
-	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
-	printf(SEQ_CRSR_HIDE);
-	is_term_raw = 1;
-}
 
 fn draw_menu(menu: &Menu)
 {
@@ -40,12 +28,13 @@ fn draw_menu(menu: &Menu)
 
 fn main()
 {
+	let stdout = std::io::stdout().into_raw_mode().unwrap();
 	let stdin = std::io::stdin();
+	let cursor_hider = HideCursor::from(stdout);
+	let mut input = Vec::<u8>::new();
 	
-	term_set_raw();
-	print!("{}", SEQ_CRSR_HIDE);
-	
-	'mainloop: for key in stdin.keys() {
+	input = stdin.read_to_end(&mut input);
+	'mainloop: for key in input {
 		if !key.is_ok() {
 			continue;
 		}
