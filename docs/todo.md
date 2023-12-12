@@ -17,7 +17,7 @@
 + add keyboard input and close via ctl + 'c' and 'q'
 + add cursor hide/show
 + add terminal clear
-- add raw terminal mode
+- add raw terminal mode (compiles, terminal freezes)
 - add multiline-feedback
 - add feedback line
 - add menu entry cursor (up and down)
@@ -32,4 +32,6 @@
 - the license into binary at compile time thing can be easily done with include
   macro?
 - use shell scripts for building and deploying
+- resolve limitation violations (Cargo, lib "termion",
+  suckless_style_mixing_code_and_variable_decls)
 - set version to 0.1

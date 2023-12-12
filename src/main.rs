@@ -9,52 +9,45 @@ mod config;
 use crate::menu::*;
 use crate::config::*;
 
+use std::io::{Read, Write};
 use termion::raw::IntoRawMode;
+use termion::clear;
 use termion::cursor::HideCursor;
 
 const SIGINT:  char = '\x03';
 const SIGTSTP: char = '\x32';
 
-const SEQ_CLEAR:     &str = "\x1b[2J";
-const SEQ_CRSR_HIDE: &str = "\033[?25l";
-const SEQ_CRSR_SHOW: &str = "\033[?25h";
-
 fn draw_menu(menu: &Menu)
 {
 	for entry in menu.entries {
-		println!("{}{}", ENTRY_PREPEND, entry.caption);
+		print!("{}{}", ENTRY_PREPEND, entry.caption);
 	}
 }
 
 fn main()
 {
 	let stdout = std::io::stdout().into_raw_mode().unwrap();
-	let stdin = std::io::stdin();
-	let cursor_hider = HideCursor::from(stdout);
+	let mut stdin = std::io::stdin();
 	let mut input = Vec::<u8>::new();
+	let read_bytes: usize;
+
+	let mut stdout = HideCursor::from(stdout);
 	
-	input = stdin.read_to_end(&mut input);
-	'mainloop: for key in input {
-		if !key.is_ok() {
-			continue;
-		}
-		
-		match key.unwrap() {
-		(SIGINT, SIGTSTP, 'q') => {
+	read_bytes = stdin.read_to_end(&mut input).unwrap();
+	'mainloop: for i in 0..read_bytes {
+		match input[i] as char {
+		SIGINT | SIGTSTP | 'q' => {
 			break 'mainloop;
 		}
+		
+		_ => {}
 		}
 		
-		print!("{}", SEQ_CLEAR);
-		
-		println!("{}", HEADER);
-		println!("{}", MENU_MAIN.title);
-		
+		print!("{}", clear::All);
+		print!("{}", HEADER);
+		print!("{}", MENU_MAIN.title);
 		draw_menu(&MENU_MAIN);
 		
-		break 'mainloop;
+		stdout.flush().unwrap();
 	}
-	
-	// restore original terminal settings
-	print!("{}", SEQ_CRSR_SHOW);
 }
