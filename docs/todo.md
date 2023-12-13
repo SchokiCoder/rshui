@@ -1,3 +1,6 @@
+# v0.2
+
+- add courier
 
 # v0.1
 
@@ -17,10 +20,13 @@
 + add keyboard input and close via ctl + 'c' and 'q'
 + add cursor hide/show
 + add terminal clear
-- add raw terminal mode (compiles, terminal freezes)
-- add multiline-feedback
-- add feedback line
++ add raw terminal mode
+  terminal freezes, because read_to_end waits for EOF... i am sleep deprived
+
+- carriage returns are currently necessary...
+  Is this some rust std portability troll or is this termion::raw's fault?
 - add menu entry cursor (up and down)
+- add feedback line
 - add menu navigation (left, right)
 - add command line enter via ':'
 - add command line leave via ctl + 'c' and enter

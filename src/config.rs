@@ -5,10 +5,10 @@
 
 use crate::menu::*;
 
-pub const HEADER: &str = "Example config\n\n";
+pub const HEADER: &str = "Example config\n";
 
 pub const MENU_MAIN: Menu = Menu {
-	title: "Main Menu\n\
+	title: "Main Menu\n\r\
 		---------",
 	entries: &[
 		Entry {

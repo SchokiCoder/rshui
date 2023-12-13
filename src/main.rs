@@ -12,7 +12,8 @@ use crate::config::*;
 use std::io::{Read, Write};
 use termion::raw::IntoRawMode;
 use termion::clear;
-use termion::cursor::HideCursor;
+use termion::cursor;
+use termion::cursor::{HideCursor};
 
 const SIGINT:  char = '\x03';
 const SIGTSTP: char = '\x32';
@@ -20,34 +21,37 @@ const SIGTSTP: char = '\x32';
 fn draw_menu(menu: &Menu)
 {
 	for entry in menu.entries {
-		print!("{}{}", ENTRY_PREPEND, entry.caption);
+		print!("{}{}\n\r", ENTRY_PREPEND, entry.caption);
 	}
 }
 
 fn main()
 {
-	let stdout = std::io::stdout().into_raw_mode().unwrap();
-	let mut stdin = std::io::stdin();
-	let mut input = Vec::<u8>::new();
-	let read_bytes: usize;
+	let mut stdout: termion::cursor::HideCursor<
+		termion::raw::RawTerminal<std::io::Stdout>>;
+	let mut stdin: std::io::Stdin;
+	let mut input: [u8; 1] = [0];
 
-	let mut stdout = HideCursor::from(stdout);
+	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
+	stdin = std::io::stdin();
 	
-	read_bytes = stdin.read_to_end(&mut input).unwrap();
-	'mainloop: for i in 0..read_bytes {
-		match input[i] as char {
+	'mainloop: loop {		
+		print!("{}", clear::All);
+		print!("{}", cursor::Goto(1, 1));
+		print!("{}\n\r", HEADER);
+		print!("{}\n\r", MENU_MAIN.title);
+		draw_menu(&MENU_MAIN);
+		
+		stdout.flush().unwrap();
+
+		stdin.read_exact(&mut input).unwrap();
+
+		match input[0] as char {
 		SIGINT | SIGTSTP | 'q' => {
 			break 'mainloop;
 		}
 		
 		_ => {}
 		}
-		
-		print!("{}", clear::All);
-		print!("{}", HEADER);
-		print!("{}", MENU_MAIN.title);
-		draw_menu(&MENU_MAIN);
-		
-		stdout.flush().unwrap();
 	}
 }
