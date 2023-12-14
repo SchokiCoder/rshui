@@ -10,10 +10,10 @@ use crate::menu::*;
 use crate::config::*;
 
 use std::io::{Read, Write};
-use termion::raw::IntoRawMode;
 use termion::clear;
 use termion::cursor;
 use termion::cursor::{HideCursor};
+use termion::raw::IntoRawMode;
 
 const SIGINT:  char = '\x03';
 const SIGTSTP: char = '\x32';
@@ -21,7 +21,7 @@ const SIGTSTP: char = '\x32';
 fn draw_menu(menu: &Menu)
 {
 	for entry in menu.entries {
-		print!("{}{}\n\r", ENTRY_PREPEND, entry.caption);
+		print!("{}{}\n", ENTRY_PREPEND, entry.caption);
 	}
 }
 
@@ -38,11 +38,14 @@ fn main()
 	'mainloop: loop {		
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
-		print!("{}\n\r", HEADER);
-		print!("{}\n\r", MENU_MAIN.title);
+		stdout.suspend_raw_mode().unwrap();
+		
+		print!("{}\n", HEADER);
+		print!("{}\n", MENU_MAIN.title);
 		draw_menu(&MENU_MAIN);
 		
 		stdout.flush().unwrap();
+		stdout.activate_raw_mode().unwrap();
 
 		stdin.read_exact(&mut input).unwrap();
 

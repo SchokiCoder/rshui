@@ -23,8 +23,17 @@
 + add raw terminal mode
   terminal freezes, because read_to_end waits for EOF... i am sleep deprived
 
-- carriage returns are currently necessary...
-  Is this some rust std portability troll or is this termion::raw's fault?
++ carriage returns are currently necessary...
+  termion::IntoRaw->raw_terminal_attr->libc::cfmakeraw
+				       ^^^^^^^^^^^^^^^
+				       sets attributes
+
+  Even on musl, this sets way more flags than needed, which i believe to be the
+  reason.
+  Initially i wanted to replace termion::IntoRaw with libc::tcgetattr and
+  libc::tcsetattr.
+	+but suspending raw mode during draw works too :)
+
 - add menu entry cursor (up and down)
 - add feedback line
 - add menu navigation (left, right)
