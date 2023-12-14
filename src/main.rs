@@ -10,6 +10,7 @@ use crate::menu::*;
 use crate::config::*;
 
 use std::io::{Read, Write};
+use std::process::Command;
 use termion::{clear, color, cursor};
 use termion::cursor::{HideCursor};
 use termion::raw::IntoRawMode;
@@ -41,6 +42,7 @@ fn main()
 	let mut stdin: std::io::Stdin;
 	let mut input: [u8; 1] = [0];
 	let mut cursor: usize = 0;
+	let mut cmdoutput: std::process::Output;
 
 	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
 	stdin = std::io::stdin();
@@ -60,22 +62,37 @@ fn main()
 		stdin.read_exact(&mut input).unwrap();
 
 		match input[0] as char {
-		SIGINT | SIGTSTP | 'q' => {
+			SIGINT | SIGTSTP | 'q' => {
 			break 'mainloop;
-		}
+			}
 		
-		'j' => {
+			'j' => {
 			if cursor < (MENU_MAIN.entries.len() - 1) {
 				cursor += 1;
 			}
-		}
+			}
 		
-		'k' => {
+			'k' => {
 			if cursor > 0 {
 				cursor -= 1;
 			}
-		}
-		_ => {}
+			}
+
+			'\r' => {
+			match MENU_MAIN.entries[cursor].content {
+				EntryContent::Shell(cmdstr) => {
+				cmdoutput = Command::new("sh")
+					.arg("-c")
+					.arg(cmdstr)
+					.output()
+					.unwrap();
+				}
+
+				_ => {}
+			}
+			}
+
+			_ => {}
 		}
 	}
 }

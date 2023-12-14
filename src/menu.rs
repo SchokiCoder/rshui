@@ -18,5 +18,5 @@ pub struct Entry<'a> {
 
 pub struct Menu<'a> {
 	pub title:   &'a str,
-	pub entries:	&'a [Entry<'a>],
+	pub entries: &'a [Entry<'a>],
 }

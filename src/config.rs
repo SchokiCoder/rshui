@@ -20,6 +20,11 @@ pub const MENU_MAIN: Menu = Menu {
 			caption: "Do a funny",
 			content: EntryContent::Shell("echo \"amogus\""),
 		},
+
+		Entry {
+			caption: "Clear ~/temp",
+			content: EntryContent::Shell("echo \"\" > ~/temp"),
+		},
 	],
 };
 

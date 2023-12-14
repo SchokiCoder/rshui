@@ -35,7 +35,7 @@
 	+but suspending raw mode during draw works too :)
 
 + add menu entry cursor (up and down)
-- add basic shell command execution
++ add basic shell command execution
 - add feedback line
 - add menu navigation (left, right)
 - add command line enter via ':'
@@ -48,6 +48,6 @@
 - the license into binary at compile time thing can be easily done with include
   macro?
 - use shell scripts for building and deploying
-- resolve limitation violations (Cargo, lib "termion",
-  suckless_style_mixing_code_and_variable_decls)
+- resolve limitation violations (Cargo, lib "termion")
+- suckless code style in rust sucks (regarding matches)
 - set version to 0.1
