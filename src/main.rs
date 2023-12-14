@@ -10,18 +10,27 @@ use crate::menu::*;
 use crate::config::*;
 
 use std::io::{Read, Write};
-use termion::clear;
-use termion::cursor;
+use termion::{clear, color, cursor};
 use termion::cursor::{HideCursor};
 use termion::raw::IntoRawMode;
 
 const SIGINT:  char = '\x03';
 const SIGTSTP: char = '\x32';
 
-fn draw_menu(menu: &Menu)
+fn draw_menu(menu: &Menu, cursor: usize)
 {
-	for entry in menu.entries {
-		print!("{}{}\n", ENTRY_PREPEND, entry.caption);
+	for i in 0..menu.entries.len() {
+		if i == cursor {
+			print!("{}{}",
+			       color::Fg(color::Black),
+			       color::Bg(color::White));
+			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
+			print!("{}{}",
+			       color::Fg(color::Reset),
+			       color::Bg(color::Reset));
+		} else {
+			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
+		}
 	}
 }
 
@@ -31,6 +40,7 @@ fn main()
 		termion::raw::RawTerminal<std::io::Stdout>>;
 	let mut stdin: std::io::Stdin;
 	let mut input: [u8; 1] = [0];
+	let mut cursor: usize = 0;
 
 	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
 	stdin = std::io::stdin();
@@ -42,7 +52,7 @@ fn main()
 		
 		print!("{}\n", HEADER);
 		print!("{}\n", MENU_MAIN.title);
-		draw_menu(&MENU_MAIN);
+		draw_menu(&MENU_MAIN, cursor);
 		
 		stdout.flush().unwrap();
 		stdout.activate_raw_mode().unwrap();
@@ -54,6 +64,17 @@ fn main()
 			break 'mainloop;
 		}
 		
+		'j' => {
+			if cursor < (MENU_MAIN.entries.len() - 1) {
+				cursor += 1;
+			}
+		}
+		
+		'k' => {
+			if cursor > 0 {
+				cursor -= 1;
+			}
+		}
 		_ => {}
 		}
 	}

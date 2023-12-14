@@ -15,6 +15,11 @@ pub const MENU_MAIN: Menu = Menu {
 			caption: "Show current user",
 			content: EntryContent::Shell("echo \"$USER\""),
 		},
+
+		Entry {
+			caption: "Do a funny",
+			content: EntryContent::Shell("echo \"amogus\""),
+		},
 	],
 };
 

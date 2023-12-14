@@ -34,7 +34,8 @@
   libc::tcsetattr.
 	+but suspending raw mode during draw works too :)
 
-- add menu entry cursor (up and down)
++ add menu entry cursor (up and down)
+- add basic shell command execution
 - add feedback line
 - add menu navigation (left, right)
 - add command line enter via ':'
