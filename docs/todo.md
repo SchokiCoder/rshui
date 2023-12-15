@@ -36,7 +36,9 @@
 
 + add menu entry cursor (up and down)
 + add basic shell command execution
-- add feedback line
++ add feedback line
+- add feedback color
+- detect needed lines for feedback and use that in draw_lower
 - add menu navigation (left, right)
 - add command line enter via ':'
 - add command line leave via ctl + 'c' and enter
