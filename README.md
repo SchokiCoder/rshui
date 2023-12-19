@@ -10,6 +10,8 @@ Set it as their default shell, to chain them into specific tasks :D
 A scripting interface allows you to tack logic onto the menus.  
 With it you can even create entire menus at runtime.  
 
+# Probably outdated info below (to be done)
+
 ## Version numbers
 
 This is a rewrite of my [hui](https://github.com/SchokiCoder/hui) in Rust.  

@@ -1,7 +1,5 @@
-/* Copyright (C) 2023 Andy Frank Schoknecht
- * Use of this source code is governed by the BSD-3-Clause
- * license, that can be found in the LICENSE file.
- */
+// SPDX-License-Identifier: GPL-2.0-or-later
+// Copyright (C) 2023  Andy Frank Schoknecht
 
 mod menu;
 mod config;
