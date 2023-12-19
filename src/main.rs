@@ -51,12 +51,13 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 	print!("{}:{}", color::Fg(color::LightBlack), color::Fg(color::Reset));
 
 	let fb_str = match feedback {
-		Some(x) => {
-			x
-		}
-		None => {
-			return;
-		}
+	Some(x) => {
+		x
+	}
+	
+	None => {
+		return;
+	}
 	};
 
 	if fb_str.len() > term_w as usize {
@@ -69,11 +70,72 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 	       color::Fg(color::Reset));
 }
 
+fn handle_key(key:       char,
+              active:    &mut bool,
+              cursor:    &mut usize,
+              cmdoutput: &mut Option<std::process::Output>)
+{
+	match key {
+	SIGINT | SIGTSTP | 'q' => {
+		*active = false;
+	}
+
+	'j' => {
+		if *cursor < (MENU_MAIN.entries.len() - 1) {
+			*cursor += 1;
+		}
+	}
+
+	'k' => {
+		if *cursor > 0 {
+			*cursor -= 1;
+		}
+	}
+
+	'L' => {
+		match MENU_MAIN.entries[*cursor].content {
+		EntryContent::Shell(cmdstr) => {
+			*cmdoutput = Some(Command::new("sh")
+				.arg("-c")
+				.arg(cmdstr)
+				.output()
+				.unwrap());
+		}
+
+		_ => {}
+		}
+	}
+
+	_ => {}
+	}
+}
+
+fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>)
+                         -> Option<String>
+{
+	let ret: Option<String>;
+	
+	ret = match cmdoutput {
+	Some(value) => {
+		if value.stderr.len() > 0 {
+			Some(String::from_utf8(value.stderr).unwrap())
+		} else {
+			Some(String::from_utf8(value.stdout).unwrap())
+		}
+	}
+
+	None => { None }
+	};
+	
+	return ret;
+}
+
 fn main()
 {
+	let mut active: bool = true;
 	let mut cursor: usize = 0;
 	let mut cmdoutput: Option<std::process::Output> = None;
-	let mut feedback: Option<String> = None;
+	let mut feedback: Option<String>;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
 	let mut stdout: termion::cursor::HideCursor<
@@ -84,7 +146,7 @@ fn main()
 	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
 	stdin = std::io::stdin();
 	
-	'mainloop: loop {		
+	while active {
 		(term_w, term_h) = termion::terminal_size().unwrap();
 
 		print!("{}", clear::All);
@@ -95,17 +157,7 @@ fn main()
 		print!("{}\n", MENU_MAIN.title);
 		draw_menu(&MENU_MAIN, cursor);
 
-		match cmdoutput {
-			Some(value) => {
-			if value.stderr.len() > 0 {
-				feedback = Some(String::from_utf8(value.stderr).unwrap());
-			} else {
-				feedback = Some(String::from_utf8(value.stdout).unwrap());
-			}
-			}
-			
-			None => {}
-		}
+		feedback = cmdoutput_to_feedback(cmdoutput);
 		cmdoutput = None;
 		draw_lower(&mut stdout, term_w, term_h, &feedback);
 		
@@ -113,39 +165,9 @@ fn main()
 		stdout.activate_raw_mode().unwrap();
 
 		stdin.read_exact(&mut input).unwrap();
-
-		match input[0] as char {
-			SIGINT | SIGTSTP | 'q' => {
-			break 'mainloop;
-			}
-		
-			'j' => {
-			if cursor < (MENU_MAIN.entries.len() - 1) {
-				cursor += 1;
-			}
-			}
-		
-			'k' => {
-			if cursor > 0 {
-				cursor -= 1;
-			}
-			}
-
-			'L' => {
-			match MENU_MAIN.entries[cursor].content {
-				EntryContent::Shell(cmdstr) => {
-				cmdoutput = Some(Command::new("sh")
-					.arg("-c")
-					.arg(cmdstr)
-					.output()
-					.unwrap());
-				}
-
-				_ => {}
-			}
-			}
-
-			_ => {}
-		}
+		handle_key(input[0] as char,
+		           &mut active,
+		           &mut cursor,
+		           &mut cmdoutput);
 	}
 }

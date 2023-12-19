@@ -39,6 +39,7 @@
 + add feedback line
 + add feedback color
 + fix incorrect default exec bind
++ move some main function parts into functions
 - detect needed lines for feedback and use that in draw_lower
 - add menu navigation (left, right)
 - add command line enter via ':'
