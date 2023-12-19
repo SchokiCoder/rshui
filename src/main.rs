@@ -50,7 +50,7 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 		print!("\n");
 	}
 	
-	print!(":");
+	print!("{}:{}", color::Fg(color::LightBlack), color::Fg(color::Reset));
 
 	let fb_str = match feedback {
 		Some(x) => {
@@ -65,7 +65,10 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 		return;
 	}
 	
-	print!("{}", fb_str);
+	print!("{}{}{}",
+	       color::Fg(color::LightBlack),
+	       fb_str,
+	       color::Fg(color::Reset));
 }
 
 fn main()
@@ -130,7 +133,7 @@ fn main()
 			}
 			}
 
-			'\r' => {
+			'L' => {
 			match MENU_MAIN.entries[cursor].content {
 				EntryContent::Shell(cmdstr) => {
 				cmdoutput = Some(Command::new("sh")
