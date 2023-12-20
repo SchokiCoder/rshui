@@ -121,16 +121,19 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 
 fn handle_key(key:       char,
               active:    &mut bool,
+              cmdoutput: &mut Option<std::process::Output>,
               cursor:    &mut usize,
-              cmdoutput: &mut Option<std::process::Output>)
+              menu_path: &mut Vec<&Menu>)
 {
+	let cur_menu: &Menu = menu_path[menu_path.len() - 1];
+
 	match key {
 	SIGINT | SIGTSTP | 'q' => {
 		*active = false;
 	}
 
 	'j' => {
-		if *cursor < (MENU_MAIN.entries.len() - 1) {
+		if *cursor < (cur_menu.entries.len() - 1) {
 			*cursor += 1;
 		}
 	}
@@ -140,9 +143,25 @@ fn handle_key(key:       char,
 			*cursor -= 1;
 		}
 	}
+	
+	'l' => {
+		match cur_menu.entries[*cursor].content {
+		EntryContent::Menu(m) => {
+			menu_path.push(&m);
+		}
+		
+		_ => {}
+		}
+	}
+	
+	'h' => {
+		if menu_path.len() > 1 {
+			menu_path.pop();
+		}
+	}
 
 	'L' => {
-		match MENU_MAIN.entries[*cursor].content {
+		match cur_menu.entries[*cursor].content {
 		EntryContent::Shell(cmdstr) => {
 			*cmdoutput = Some(Command::new("sh")
 				.arg("-c")
@@ -171,11 +190,14 @@ fn main()
 		termion::raw::RawTerminal<std::io::Stdout>>;
 	let mut term_w: u16;
 	let mut term_h: u16;
+	let mut menu_path: Vec<&Menu> = vec![&MENU_MAIN];
 
 	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
 	stdin = std::io::stdin();
 	
 	while active {
+		let cur_menu: &Menu = menu_path[menu_path.len() - 1];
+
 		(term_w, term_h) = termion::terminal_size().unwrap();
 
 		print!("{}", clear::All);
@@ -183,8 +205,8 @@ fn main()
 		stdout.suspend_raw_mode().unwrap();
 		
 		print!("{}\n", HEADER);
-		print!("{}\n", MENU_MAIN.title);
-		draw_menu(&MENU_MAIN, cursor);
+		print!("{}\n", cur_menu.title);
+		draw_menu(&cur_menu, cursor);
 
 		feedback = cmdoutput_to_feedback(cmdoutput);
 		cmdoutput = None;
@@ -196,7 +218,8 @@ fn main()
 		stdin.read_exact(&mut input).unwrap();
 		handle_key(input[0] as char,
 		           &mut active,
+		           &mut cmdoutput,
 		           &mut cursor,
-		           &mut cmdoutput);
+		           &mut menu_path);
 	}
 }
