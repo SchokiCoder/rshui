@@ -16,21 +16,24 @@ use termion::raw::IntoRawMode;
 const SIGINT:  char = '\x03';
 const SIGTSTP: char = '\x32';
 
-fn draw_menu(menu: &Menu, cursor: usize)
+fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>)
+                         -> Option<String>
 {
-	for i in 0..menu.entries.len() {
-		if i == cursor {
-			print!("{}{}",
-			       color::Fg(color::Black),
-			       color::Bg(color::White));
-			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
-			print!("{}{}",
-			       color::Fg(color::Reset),
-			       color::Bg(color::Reset));
+	let ret: Option<String>;
+
+	ret = match cmdoutput {
+	Some(value) => {
+		if value.stderr.len() > 0 {
+			Some(String::from_utf8(value.stderr).unwrap())
 		} else {
-			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
+			Some(String::from_utf8(value.stdout).unwrap())
 		}
 	}
+
+	None => { None }
+	};
+
+	return ret;
 }
 
 fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
@@ -60,6 +63,7 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 	}
 	};
 
+	let fb_str = fb_str.trim_end();
 	if get_needed_lines(fb_str, term_w as usize) != 1 {
 		return;
 	}
@@ -68,6 +72,51 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 	       color::Fg(color::LightBlack),
 	       fb_str,
 	       color::Fg(color::Reset));
+}
+
+fn draw_menu(menu: &Menu, cursor: usize)
+{
+	for i in 0..menu.entries.len() {
+		if i == cursor {
+			print!("{}{}",
+			       color::Fg(color::Black),
+			       color::Bg(color::White));
+			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
+			print!("{}{}",
+			       color::Fg(color::Reset),
+			       color::Bg(color::Reset));
+		} else {
+			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
+		}
+	}
+}
+
+fn get_needed_lines(s: &str, line_width: usize) -> usize
+{
+	let mut ret: usize = 1;
+	let mut x: usize = 0;
+
+	if s.len() == 0 {
+		return 0;
+	}
+
+	for c in s.bytes() {
+		match c {
+		b'\r' | b'\n' => {
+			ret += 1;
+			x = 0;
+		}
+
+		_ => { x += 1; }
+		}
+
+		if x > line_width {
+			x = 0;
+			ret += 1;
+		}
+	}
+
+	ret
 }
 
 fn handle_key(key:       char,
@@ -108,54 +157,6 @@ fn handle_key(key:       char,
 
 	_ => {}
 	}
-}
-
-fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>)
-                         -> Option<String>
-{
-	let ret: Option<String>;
-	
-	ret = match cmdoutput {
-	Some(value) => {
-		if value.stderr.len() > 0 {
-			Some(String::from_utf8(value.stderr).unwrap())
-		} else {
-			Some(String::from_utf8(value.stdout).unwrap())
-		}
-	}
-
-	None => { None }
-	};
-	
-	return ret;
-}
-
-fn get_needed_lines(s: &String, line_width: usize) -> usize
-{
-	let mut ret: usize = 1;
-	let mut x: usize = 0;
-
-	if s.len() == 0 {
-		return 0;
-	}
-
-	for c in s.bytes() {
-		match c {
-		b'\r' | b'\n' => {
-			ret += 1;
-			x = 0;
-		}
-
-		_ => { x += 1; }
-		}
-
-		if x > line_width {
-			x = 0;
-			ret += 1;
-		}
-	}
-
-	ret
 }
 
 fn main()
