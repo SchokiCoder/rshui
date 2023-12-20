@@ -60,7 +60,7 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 	}
 	};
 
-	if fb_str.len() > term_w as usize {
+	if get_needed_lines(fb_str, term_w as usize) != 1 {
 		return;
 	}
 	
@@ -128,6 +128,34 @@ fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>)
 	};
 	
 	return ret;
+}
+
+fn get_needed_lines(s: &String, line_width: usize) -> usize
+{
+	let mut ret: usize = 1;
+	let mut x: usize = 0;
+
+	if s.len() == 0 {
+		return 0;
+	}
+
+	for c in s.bytes() {
+		match c {
+		b'\r' | b'\n' => {
+			ret += 1;
+			x = 0;
+		}
+
+		_ => { x += 1; }
+		}
+
+		if x > line_width {
+			x = 0;
+			ret += 1;
+		}
+	}
+
+	ret
 }
 
 fn main()

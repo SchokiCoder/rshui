@@ -40,7 +40,8 @@
 + add feedback color
 + fix incorrect default exec bind
 + move some main function parts into functions
-- detect needed lines for feedback and use that in draw_lower
++ detect needed lines for feedback and use that in draw_lower
+- add rtrim before needed_lines check
 - add menu navigation (left, right)
 - add command line enter via ':'
 - add command line leave via ctl + 'c' and enter
