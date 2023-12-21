@@ -23,21 +23,14 @@ starting where the primary goal-roadmap ended.
 
 # Limitations
 
-- Rust 2021 edition, suckless code style
+- Rust 2021 edition, suckless code style for Rust see
+  [docs/code_style.md](https://github.com/SchokiCoder/rshui/blob/main/docs/code_style.md).
 - configuration via Rust source code
-- max. 3000 sloc in Rust (not including any config files)
+- max. 3000 sloc in Rust
 - max. 200 sloc for build system (eg. Cargo.toml)
 - strictly POSIX compatible
-- no dependcies on libraries other than std and core
-- building the package by editing config.rs and Cargo.toml and running cargo
-- provide secondary goal updates as patches when not that necessary
-- no file level `use` except for local files and std::string::String
-- no use of `impl` (thus no oop, traits or operator overloading)
-- no closures
-- no `unsafe`, except to create safe wrappers around C ffi
 - this rewrite must strife to implement the same features as the original before
   it can implement new ones in itself
-- no building via cargo
 
 # Roadmap
 
@@ -57,92 +50,61 @@ The following areas can be configured (fore- and background color):
 - menu entry on which the user's cursor is hovering
 - internal command line
 
-If the implementation of color control is too cumbersome, complicated,
-line-heavy or unportable, then it can be pushed into the front of the optional
-roadmap of features.  
-
-## v0.2.0 Commands / Keybinds
-
 The keybinds and commands are generally inspired by Vim and Neovim.  
 Application defined commands are entered after pressing colon and many commands
 are 1:1 compatible with Vim.  
-Pressing number keys causes the next command to be executed as many times as
-given unless that keybind has a specific behavior for numbers.
 
-## v0.3.0 Basic sub-app execution
+keys:
 
-Execute another app, which prints to stdout and redirect that output to it's
-own feedback.  
+- h: back
+- j: down
+- k: up
+- l: into menu
+- L: execute
 
-If sub-app prints to stderr:
+commands:
 
-- if stderr multineline: display only stderr in multiline feedback
-- if stderr one line: display it in commandline and stdout in multiline feedback
+- q, quit, exit: exit app
+- NUMBER: goto entry $NUMBER (starting at 1)
 
-stderr prints are always prepended by "ERROR ".  
+## v0.2.0 Config file
+
+- file format
+- read priority "/etc" over "~/.config/$FILE" over "~/.$FILE" over "$CWD/$FILE"
+- if no config found, panic
+- read config file and remove source code config
+
+## v0.3.0 Child process execution
+
+- just like hui 1.4
+- add courier and let it handle multiline feedback
 
 ## v1.0.0 Final polish
 
 This task is for creating/polishing the end-user cmd-line interface.  
 That includes:  
 
-- manpage
+- mangen?
+- config file manpage
+- hui manpage
+- courier manpage
 - POSIX call options
 - return values
 - print messages (consistency, version information, license information)
 
-Provide sane, generalist standard configuration but with a compiler warning,
-that it had been untouched.
+Provide generalist standard configuration which says so itself via main menu
+title.
 
-## Configurable basics
-
-Keys:  
-
-- command key (key that needs to be pressed and that will be displayed as first
-in the command line)
-- up
-- down
-- back
-- into
-- execute
-
-Entry prepend:  
-By default a menu's entry looks like this:  
-\> Menu entry  
-  
-Make the prepend "> " configurable.  
-
-## C function interface in config (Experimental)
-
-Each entry can have a function pointer to a function defined in the scripts.h.  
-A user function has output string pointer for feedback and int return.  
-
-## configurable aligns (Patch)
+## v1.1.0 configurable aligns and margins
 
 - Header
+- Title
+- Entries
+- Feedback
+- Cmdline
 - Multiline feedback
 
-## configurable margins (Patch)
+## v1.2.0rc Scripting interface (Experimental)
 
-- Header
-- Multiline feedback
-
-## Advanced sub-app execution
-
-Allows for applications with their own keyboard-input and a mainloop to run.  
-However, since their keybinds could collide with my keybinds, the house_ui will
-steal keybinds for now.  
-
-## Full sub-app execution
-
-If this point is reached, it means house_ui will no longer steal keybinds and
-instead expect a special modifier key to be pressed.  
-This will explicitly steal keybinds.  
-The modifier key is of course only necessary when there is currently another
-application open within house_ui but it will also not refuse to work if
-modifier is given unnecessarily.  
-
-## Later if at all
-
-- various commands, keybinds and cmdline options
-- GNU-style options as aliases to the POSIX ones.
+Maybe Lua?
+Lua in Rust didn't work too well last time i tried.

@@ -1,33 +1,57 @@
-# Rusted House User Interface
+```
+j6      j6
+QQ      4P
+QQ
+QQ
+QQQQQ6  jg
+QQQQQQ  QQ
+QQ  QQ  QQ
+QQ  QQ  QQ
+QQ  QQQQQQ
+4P  4QQQQP
+```
 
-## What is this
+# What is this
 
 A customizable terminal user-interface for common tasks and personal tastes,
 inspired by suckless software.  
-You can statically create TUI menus in config source code and then deploy it to
-your user.  
-Set it as their default shell, to chain them into specific tasks :D  
+You can create TUI menus in a config file and then deploy it to your user.  
+Then set hui as their default shell, to chain them into specific tasks :D  
 A scripting interface allows you to tack logic onto the menus.  
 With it you can even create entire menus at runtime.  
 
-# Probably outdated info below (to be done)
+# HUI
 
-## Version numbers
+This project is a Rust rewrite of
+[the original hui](https://github.com/SchokiCoder/hui).  
+The purpose of this to myself is to figure out how suckless coding style can be
+applied to a Rust project.  
+Other than that it intends to be a application useful for average to expert
+Linux/BSD/etc users.  
+So this will reimplement all of the original features plus a config file system.  
 
-This is a rewrite of my [hui](https://github.com/SchokiCoder/hui) in Rust.  
-It follows semantic versioning like the original but the minor and major number
-depend on the features implemented.  
-If rshui has the same features as hui 1.2.X then rshui is v1.2.X.  
-Bugfixes are likely independent of each other, therefore the patchnumber is not
-shared.  
+# Install (no scripts yet, won't work)
 
-## A suckless Rust app?
+Follow these steps:  
 
-Yes, inspired by suckless and my original implementation.  
-The Rust compiler and language design is very likely not approved by suckless
-standards, but i want to see if it could be.  
-  
-My goal here is not to have hui in Rust but to write a Rust app with only a
-subset of Rust's features.  
-Maybe this can spark the question of: "Can one make a language like Rust but
-simpler?"  
+- `git clone https://github.com/SchokiCoder/rshui`
+- `cd rshui`
+- `chmod u+x *.sh; sudo ./install.sh`
+
+This will install two binaries "hui" and "courier".  
+Courier is the pager that also lives here, because they share a lot of code so
+they can look and feel similar.  
+If you don't wish to have "courier", edit
+[install.sh](https://github.com/SchokiCoder/rshui/blob/main/install.sh).  
+
+# Contributing
+
+If you wish to do that, follow these steps to make it convenient for both of us:  
+
+- have a look at docs/todo.md to see short term goals
+- have a look at docs/goals.md to see long term goals
+- create a fork on GitHub
+- commit your changes
+- create a pull request on GitHub
+
+Thank you and have fun.  

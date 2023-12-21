@@ -1,8 +1,31 @@
-# v0.2
+# v1.0.0
 
+- mangen?
+- config file manpage
+- hui manpage
+- courier manpage
+- POSIX call options
+- return values
+- print messages (consistency, version information, license information)
+- generalist standard configuration which says so itself via main menu title
+- install scripts
+- update README.md#Install
+
+# v0.3.0
+
+- child process execution test vim (maybe it already works)
 - add courier
+- give hui multiline feedback to courier
 
-# v0.1
+# v0.2.0
+
+- test ron as config file format, if not toml
+- read priority "/etc" over "~/.config/$FILE" over "~/.$FILE" over "$CWD/$FILE"
+- if no config found, panic
+- read config file
+- remove source code config
+
+# v0.1.0
 
 + README.md: remove ambigous patch statement
 + goals.md: add exception to file-level `use` limitation for local files
