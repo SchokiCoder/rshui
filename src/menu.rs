@@ -4,9 +4,9 @@
 #[allow(dead_code)]
 
 pub enum EntryContent<'a> {
-	Shell(&'a str),
-	Rust,
 	Menu(&'a Menu<'a>),
+	Rust,
+	Shell(&'a str),
 }
 
 pub struct Entry<'a> {

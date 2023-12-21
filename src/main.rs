@@ -76,17 +76,40 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 
 fn draw_menu(menu: &Menu, cursor: usize)
 {
+	let mut prefix:  &str;
+	let mut caption: &str;
+	let mut postfix: &str;
+
 	for i in 0..menu.entries.len() {
+		caption = menu.entries[i].caption;
+		
+		match menu.entries[i].content {
+		EntryContent::Menu(_) => {
+			prefix  = ET_MENU_PREFIX;
+			postfix = ET_MENU_POSTFIX;
+		}
+
+		EntryContent::Rust => {
+			prefix  = ET_RS_PREFIX;
+			postfix = ET_RS_POSTFIX;
+		}
+
+		EntryContent::Shell(_) => {
+			prefix  = ET_SH_PREFIX;
+			postfix = ET_SH_POSTFIX;
+		}
+		}
+		
 		if i == cursor {
 			print!("{}{}",
 			       color::Fg(color::Black),
 			       color::Bg(color::White));
-			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
+			print!("{}{}{}\n", prefix, caption, postfix);
 			print!("{}{}",
 			       color::Fg(color::Reset),
 			       color::Bg(color::Reset));
 		} else {
-			print!("{}{}\n", ENTRY_PREPEND, menu.entries[i].caption);
+			print!("{}{}{}\n", prefix, caption, postfix);
 		}
 	}
 }

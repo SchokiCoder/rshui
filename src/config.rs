@@ -31,8 +31,8 @@ pub const MENU_MAIN: Menu = Menu {
 		},
 
 		Entry {
-			caption: "Do a funny",
-			content: EntryContent::Shell("echo \"amogus\""),
+			caption: "Rust Dummy",
+			content: EntryContent::Rust,
 		},
 
 		Entry {
@@ -42,4 +42,9 @@ pub const MENU_MAIN: Menu = Menu {
 	],
 };
 
-pub const ENTRY_PREPEND: &str = "> ";
+pub const ET_MENU_PREFIX:  &str = "> [";
+pub const ET_MENU_POSTFIX: &str = "]";
+pub const ET_RS_PREFIX:    &str = "> ";
+pub const ET_RS_POSTFIX:   &str = "!";
+pub const ET_SH_PREFIX:    &str = "> ";
+pub const ET_SH_POSTFIX:   &str = "";

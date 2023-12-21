@@ -43,6 +43,7 @@
 + detect needed lines for feedback and use that in draw_lower
 + add rtrim before needed_lines check
 + add menu navigation (left, right)
++ add hui 1.4 style entry prefix and postfix
 - add command line enter via ':'
 - add command line leave via ctl + 'c' and enter
 - add config for text fore- and background
