@@ -43,10 +43,13 @@
 + detect needed lines for feedback and use that in draw_lower
 + add rtrim before needed_lines check
 + add menu navigation (left, right)
-+ add hui 1.4 style entry prefix and postfix
-- add command line enter via ':'
-- add command line leave via ctl + 'c' and enter
-- add config for text fore- and background
++ add entry prefix and postfix for each entry type
++ add command line enter via ':'
++ add command line leave via ctl + 'c'
++ add command line typing and display
+- add command interpretation via enter
+- add config values for text fore- and background
+- add config values for key binds
 
 - look at asm to find more things that need to be set for rustc
   `rustc --emit asm`

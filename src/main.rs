@@ -36,23 +36,8 @@ fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>)
 	return ret;
 }
 
-fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
-              term_w: u16,
-              term_h: u16,
-              feedback: &Option<String>)
+fn draw_feedback(feedback: &Option<String>, term_w: u16)
 {
-	let y: u16;
-
-	stdout.activate_raw_mode().unwrap();
-	(_, y) = stdout.cursor_pos().unwrap();
-	stdout.suspend_raw_mode().unwrap();
-
-	for _ in y..term_h {
-		print!("\n");
-	}
-	
-	print!("{}:{}", color::Fg(color::LightBlack), color::Fg(color::Reset));
-
 	let fb_str = match feedback {
 	Some(x) => {
 		x
@@ -72,6 +57,35 @@ fn draw_lower(stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
 	       color::Fg(color::LightBlack),
 	       fb_str,
 	       color::Fg(color::Reset));
+}
+
+fn draw_lower(cmdline: &String,
+              cmdmode: &bool,
+              feedback: &Option<String>,
+              stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
+              term_w: u16,
+              term_h: u16)
+{
+	let y: u16;
+
+	stdout.activate_raw_mode().unwrap();
+	(_, y) = stdout.cursor_pos().unwrap();
+	stdout.suspend_raw_mode().unwrap();
+
+	for _ in y..term_h {
+		print!("\n");
+	}
+	
+	print!("{}:{}", color::Fg(color::LightBlack), color::Fg(color::Reset));
+
+	if *cmdmode {
+		print!("{}{}{}",
+		       color::Fg(color::LightBlack),
+		       cmdline,
+		       color::Fg(color::Reset));
+	} else {
+		draw_feedback(feedback, term_w);
+	}
 }
 
 fn draw_menu(menu: &Menu, cursor: usize)
@@ -124,8 +138,8 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 	}
 
 	for c in s.bytes() {
-		match c {
-		b'\r' | b'\n' => {
+		match c as char {
+		'\r' | '\n' => {
 			ret += 1;
 			x = 0;
 		}
@@ -144,11 +158,27 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 
 fn handle_key(key:       char,
               active:    &mut bool,
+              cmdline:   &mut String,
+              cmdmode:   &mut bool,
               cmdoutput: &mut Option<std::process::Output>,
               cursor:    &mut usize,
               menu_path: &mut Vec<&Menu>)
 {
 	let cur_menu: &Menu = menu_path[menu_path.len() - 1];
+
+	if *cmdmode {
+		match key {
+		SIGINT | SIGTSTP => {
+			*cmdmode = false;
+		}
+		
+		_ => {
+			cmdline.push(key);
+		}
+		}
+		
+		return;
+	}
 
 	match key {
 	SIGINT | SIGTSTP | 'q' => {
@@ -196,6 +226,12 @@ fn handle_key(key:       char,
 		_ => {}
 		}
 	}
+	
+	':' => {
+		if *cmdmode == false {
+			*cmdmode = true;
+		}
+	}
 
 	_ => {}
 	}
@@ -205,6 +241,8 @@ fn main()
 {
 	let mut active: bool = true;
 	let mut cursor: usize = 0;
+	let mut cmdline: String = String::new();
+	let mut cmdmode: bool = false;
 	let mut cmdoutput: Option<std::process::Output> = None;
 	let mut feedback: Option<String>;
 	let mut input: [u8; 1] = [0];
@@ -233,7 +271,12 @@ fn main()
 
 		feedback = cmdoutput_to_feedback(cmdoutput);
 		cmdoutput = None;
-		draw_lower(&mut stdout, term_w, term_h, &feedback);
+		draw_lower(&cmdline,
+			   &cmdmode,
+			   &feedback,
+			   &mut stdout,
+			   term_w,
+			   term_h);
 		
 		stdout.flush().unwrap();
 		stdout.activate_raw_mode().unwrap();
@@ -241,6 +284,8 @@ fn main()
 		stdin.read_exact(&mut input).unwrap();
 		handle_key(input[0] as char,
 		           &mut active,
+		           &mut cmdline,
+		           &mut cmdmode,
 		           &mut cmdoutput,
 		           &mut cursor,
 		           &mut menu_path);
