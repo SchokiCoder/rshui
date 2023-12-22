@@ -70,16 +70,11 @@
 + add command line enter via ':'
 + add command line leave via ctl + 'c'
 + add command line typing and display
-- add command interpretation via enter
++ add command interpretation via enter
 - add config values for text fore- and background
 - add config values for key binds
-
-- look at asm to find more things that need to be set for rustc
-  `rustc --emit asm`
 
 - the license into binary at compile time thing can be easily done with include
   macro?
 - use shell scripts for building and deploying
-- resolve limitation violations (Cargo, lib "termion")
-- suckless code style in rust sucks (regarding matches)
 - set version to 0.1

@@ -14,26 +14,22 @@ use termion::cursor::{DetectCursorPos, HideCursor};
 use termion::raw::IntoRawMode;
 
 const SIGINT:  char = '\x03';
-const SIGTSTP: char = '\x32';
+const SIGTSTP: char = '\x04';
 
-fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>)
-                         -> Option<String>
+fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>,
+                         feedback:  &mut Option<String>)
 {
-	let ret: Option<String>;
-
-	ret = match cmdoutput {
+	match cmdoutput {
 	Some(value) => {
 		if value.stderr.len() > 0 {
-			Some(String::from_utf8(value.stderr).unwrap())
+			*feedback = Some(String::from_utf8(value.stderr).unwrap());
 		} else {
-			Some(String::from_utf8(value.stdout).unwrap())
+			*feedback = Some(String::from_utf8(value.stdout).unwrap());
 		}
 	}
 
-	None => { None }
+	None => {}
 	};
-
-	return ret;
 }
 
 fn draw_feedback(feedback: &Option<String>, term_w: u16)
@@ -156,12 +152,51 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 	ret
 }
 
+fn handle_cmd(cmdline: &mut String,
+              active: &mut bool,
+              cursor: &mut usize,
+              feedback: &mut Option<String>,
+              menu_path: &mut Vec<&Menu>)
+{
+	let cur_menu: &Menu = menu_path[menu_path.len() - 1];
+	let res_num: Result<usize, std::num::ParseIntError>;
+	let num: usize;
+
+	match cmdline as &str {
+	"q" | "quit" | "exit" => {
+		*active = false;
+	}
+
+	_ => {
+		res_num = usize::from_str_radix(cmdline.as_ref(), 10);
+		
+		if res_num.is_ok() {
+			num = res_num.unwrap();
+			
+			if num > 0 {
+				if num > cur_menu.entries.len() {
+					*cursor = cur_menu.entries.len() - 1;
+				} else {
+					*cursor = num - 1;
+				}
+			}
+		} else {
+			*feedback = Some(format!("Command \"{}\" not recognised",
+			                         cmdline));
+		}
+	}
+	}
+	
+	cmdline.clear();
+}
+
 fn handle_key(key:       char,
               active:    &mut bool,
               cmdline:   &mut String,
               cmdmode:   &mut bool,
               cmdoutput: &mut Option<std::process::Output>,
               cursor:    &mut usize,
+              feedback: &mut Option<String>,
               menu_path: &mut Vec<&Menu>)
 {
 	let cur_menu: &Menu = menu_path[menu_path.len() - 1];
@@ -171,7 +206,12 @@ fn handle_key(key:       char,
 		SIGINT | SIGTSTP => {
 			*cmdmode = false;
 		}
-		
+
+		'\r' => {
+			handle_cmd(cmdline, active, cursor, feedback, menu_path);
+			*cmdmode = false;
+		}
+
 		_ => {
 			cmdline.push(key);
 		}
@@ -244,7 +284,7 @@ fn main()
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
 	let mut cmdoutput: Option<std::process::Output> = None;
-	let mut feedback: Option<String>;
+	let mut feedback: Option<String> = None;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
 	let mut stdout: termion::cursor::HideCursor<
@@ -269,7 +309,7 @@ fn main()
 		print!("{}\n", cur_menu.title);
 		draw_menu(&cur_menu, cursor);
 
-		feedback = cmdoutput_to_feedback(cmdoutput);
+		cmdoutput_to_feedback(cmdoutput, &mut feedback);
 		cmdoutput = None;
 		draw_lower(&cmdline,
 			   &cmdmode,
@@ -288,6 +328,7 @@ fn main()
 		           &mut cmdmode,
 		           &mut cmdoutput,
 		           &mut cursor,
+		           &mut feedback,
 		           &mut menu_path);
 	}
 }
