@@ -45,9 +45,9 @@ The following areas can be configured (fore- and background color):
 
 - header
 - title
-- body (menu / multiline-feedback)
+- entry
+- entry on which the user's cursor is hovering
 - feedback line
-- menu entry on which the user's cursor is hovering
 - internal command line
 
 The keybinds and commands are generally inspired by Vim and Neovim.  
@@ -61,6 +61,7 @@ keys:
 - k: up
 - l: into menu
 - L: execute
+- _Enter_: enter command (command line)
 
 commands:
 

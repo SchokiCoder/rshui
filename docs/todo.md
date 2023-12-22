@@ -1,5 +1,9 @@
 # v1.0.0
 
+- the license into binary at compile time thing can be easily done with include
+  macro?
+  Do i even still need that with GPL2?
+
 - mangen?
 - config file manpage
 - hui manpage
@@ -72,9 +76,5 @@
 + add command line typing and display
 + add command interpretation via enter
 + add config sys for text fore- and background
-- add config values for key binds
-
-- the license into binary at compile time thing can be easily done with include
-  macro?
-- use shell scripts for building and deploying
-- set version to 0.1
++ add config values for key binds
++ set version to 0.1.0
