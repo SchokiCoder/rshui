@@ -71,7 +71,7 @@
 + add command line leave via ctl + 'c'
 + add command line typing and display
 + add command interpretation via enter
-- add config values for text fore- and background
++ add config sys for text fore- and background
 - add config values for key binds
 
 - the license into binary at compile time thing can be easily done with include

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2023  Andy Frank Schoknecht
 
+use crate::color::*;
 use crate::menu::*;
 
 pub const HEADER: &str = "Example config\n";
@@ -48,3 +49,101 @@ pub const ET_RS_PREFIX:    &str = "> ";
 pub const ET_RS_POSTFIX:   &str = "!";
 pub const ET_SH_PREFIX:    &str = "> ";
 pub const ET_SH_POSTFIX:   &str = "";
+
+pub const HEADER_FG: FgColor = FgColor {
+	active: false,
+	r: 255,
+	g: 255,
+	b: 255
+};
+
+pub const HEADER_BG: BgColor = BgColor {
+	active: false,
+	r: 30,
+	g: 30,
+	b: 30
+};
+
+pub const TITLE_FG: FgColor = FgColor {
+	active: false,
+	r: 255,
+	g: 255,
+	b: 255
+};
+
+pub const TITLE_BG: BgColor = BgColor {
+	active: false,
+	r: 30,
+	g: 30,
+	b: 30
+};
+
+pub const ENTRY_FG: FgColor = FgColor {
+	active: false,
+	r: 255,
+	g: 255,
+	b: 255
+};
+
+pub const ENTRY_BG: BgColor = BgColor {
+	active: false,
+	r: 30,
+	g: 30,
+	b: 30
+};
+
+pub const ENTRY_HOVER_FG: FgColor = FgColor {
+	active: true,
+	r: 0,
+	g: 0,
+	b: 0
+};
+
+pub const ENTRY_HOVER_BG: BgColor = BgColor {
+	active: true,
+	r: 255,
+	g: 255,
+	b: 255
+};
+
+pub const CMDLINE_FG: FgColor = FgColor {
+	active: false,
+	r: 255,
+	g: 255,
+	b: 255
+};
+
+pub const CMDLINE_BG: BgColor = BgColor {
+	active: false,
+	r: 30,
+	g: 30,
+	b: 30
+};
+
+pub const FEEDBACK_FG: FgColor = FgColor {
+	active: true,
+	r: 160,
+	g: 160,
+	b: 160
+};
+
+pub const FEEDBACK_BG: BgColor = BgColor {
+	active: false,
+	r: 30,
+	g: 30,
+	b: 30
+};
+
+pub const DEFAULT_FG: FgColor = FgColor {
+	active: false,
+	r: 255,
+	g: 255,
+	b: 255
+};
+
+pub const DEFAULT_BG: BgColor = BgColor {
+	active: false,
+	r: 0,
+	g: 0,
+	b: 0
+};

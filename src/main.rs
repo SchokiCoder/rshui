@@ -2,6 +2,7 @@
 // Copyright (C) 2023  Andy Frank Schoknecht
 
 mod menu;
+mod color;
 mod config;
 
 use crate::menu::*;
@@ -9,7 +10,7 @@ use crate::config::*;
 
 use std::io::{Read, Write};
 use std::process::Command;
-use termion::{clear, color, cursor};
+use termion::{clear, cursor};
 use termion::cursor::{DetectCursorPos, HideCursor};
 use termion::raw::IntoRawMode;
 
@@ -49,10 +50,12 @@ fn draw_feedback(feedback: &Option<String>, term_w: u16)
 		return;
 	}
 	
-	print!("{}{}{}",
-	       color::Fg(color::LightBlack),
+	print!("{}{}{}{}{}",
+	       FEEDBACK_FG,
+	       FEEDBACK_BG,
 	       fb_str,
-	       color::Fg(color::Reset));
+	       DEFAULT_FG,
+	       DEFAULT_BG);
 }
 
 fn draw_lower(cmdline: &String,
@@ -72,13 +75,19 @@ fn draw_lower(cmdline: &String,
 		print!("\n");
 	}
 	
-	print!("{}:{}", color::Fg(color::LightBlack), color::Fg(color::Reset));
+	print!("{}{}:{}{}",
+	       FEEDBACK_FG,
+	       FEEDBACK_BG,
+	       DEFAULT_FG,
+	       DEFAULT_BG);
 
 	if *cmdmode {
-		print!("{}{}{}",
-		       color::Fg(color::LightBlack),
+		print!("{}{}{}{}{}",
+		       CMDLINE_FG,
+		       CMDLINE_BG,
 		       cmdline,
-		       color::Fg(color::Reset));
+		       DEFAULT_FG,
+		       DEFAULT_BG);
 	} else {
 		draw_feedback(feedback, term_w);
 	}
@@ -111,17 +120,42 @@ fn draw_menu(menu: &Menu, cursor: usize)
 		}
 		
 		if i == cursor {
-			print!("{}{}",
-			       color::Fg(color::Black),
-			       color::Bg(color::White));
-			print!("{}{}{}\n", prefix, caption, postfix);
-			print!("{}{}",
-			       color::Fg(color::Reset),
-			       color::Bg(color::Reset));
+			print!("{}{}{}{}{}{}{}\n",
+			       ENTRY_HOVER_FG,
+			       ENTRY_HOVER_BG,
+			       prefix,
+			       caption,
+			       postfix,
+			       DEFAULT_FG,
+			       DEFAULT_BG);
 		} else {
-			print!("{}{}{}\n", prefix, caption, postfix);
+			print!("{}{}{}{}{}{}{}\n",
+			       ENTRY_FG,
+			       ENTRY_BG,
+			       prefix,
+			       caption,
+			       postfix,
+			       DEFAULT_FG,
+			       DEFAULT_BG);
 		}
 	}
+}
+
+fn draw_upper(header: &str, title: &str)
+{
+	print!("{}{}{}{}{}\n",
+	       HEADER_FG,
+	       HEADER_BG,
+	       header,
+	       DEFAULT_FG,
+	       DEFAULT_BG);
+
+	print!("{}{}{}{}{}\n",
+	       TITLE_FG,
+	       TITLE_BG,
+	       title,
+	       DEFAULT_FG,
+	       DEFAULT_BG);
 }
 
 fn get_needed_lines(s: &str, line_width: usize) -> usize
@@ -304,9 +338,8 @@ fn main()
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
-		
-		print!("{}\n", HEADER);
-		print!("{}\n", cur_menu.title);
+
+		draw_upper(HEADER, cur_menu.title);
 		draw_menu(&cur_menu, cursor);
 
 		cmdoutput_to_feedback(cmdoutput, &mut feedback);
