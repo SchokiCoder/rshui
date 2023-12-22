@@ -147,3 +147,11 @@ pub const DEFAULT_BG: BgColor = BgColor {
 	g: 0,
 	b: 0
 };
+
+pub const KEY_LEFT: char = 'h';
+pub const KEY_DOWN: char = 'j';
+pub const KEY_UP: char = 'k';
+pub const KEY_RIGHT: char = 'l';
+pub const KEY_EXECUTE: char = 'L';
+pub const KEY_CMDMODE: char = ':';
+pub const KEY_CMDENTER: char = '\r';

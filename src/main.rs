@@ -241,7 +241,7 @@ fn handle_key(key:       char,
 			*cmdmode = false;
 		}
 
-		'\r' => {
+		KEY_CMDENTER => {
 			handle_cmd(cmdline, active, cursor, feedback, menu_path);
 			*cmdmode = false;
 		}
@@ -259,19 +259,19 @@ fn handle_key(key:       char,
 		*active = false;
 	}
 
-	'j' => {
+	KEY_DOWN => {
 		if *cursor < (cur_menu.entries.len() - 1) {
 			*cursor += 1;
 		}
 	}
 
-	'k' => {
+	KEY_UP => {
 		if *cursor > 0 {
 			*cursor -= 1;
 		}
 	}
 	
-	'l' => {
+	KEY_RIGHT => {
 		match cur_menu.entries[*cursor].content {
 		EntryContent::Menu(m) => {
 			menu_path.push(&m);
@@ -281,13 +281,13 @@ fn handle_key(key:       char,
 		}
 	}
 	
-	'h' => {
+	KEY_LEFT => {
 		if menu_path.len() > 1 {
 			menu_path.pop();
 		}
 	}
 
-	'L' => {
+	KEY_EXECUTE => {
 		match cur_menu.entries[*cursor].content {
 		EntryContent::Shell(cmdstr) => {
 			*cmdoutput = Some(Command::new("sh")
@@ -301,7 +301,7 @@ fn handle_key(key:       char,
 		}
 	}
 	
-	':' => {
+	KEY_CMDMODE => {
 		if *cmdmode == false {
 			*cmdmode = true;
 		}
