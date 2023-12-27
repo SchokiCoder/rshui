@@ -42,7 +42,7 @@ shell = "echo \"$USER\""
 caption = "Clear ~/temp"
 shell = "echo \"\" > ~/temp"
 
-[color]
+[colors]
 [[header.fg]]
 active = false
 r = 255
@@ -115,13 +115,13 @@ r = 30
 g = 30
 b = 30	
 
-[[default.fg]]
+[[std.fg]]
 active = false
 r = 255
 g = 255
 b = 255	
 
-[[default.bg]]
+[[std.bg]]
 active = false
 r = 0
 g = 0

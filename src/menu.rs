@@ -19,5 +19,5 @@ pub struct Entry<'a> {
 pub struct Menu<'a> {
 	pub name:    &'a str,
 	pub title:   &'a str,
-	pub entries: &'a [Entry<'a>],
+	pub entries: Vec<Entry<'a>>,
 }

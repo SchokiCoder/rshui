@@ -41,3 +41,9 @@ impl std::fmt::Display for BgColor {
 		}
 	}
 }
+
+#[derive(Deserialize)]
+pub struct TextColor {
+	pub fg: FgColor,
+	pub bg: BgColor,
+}

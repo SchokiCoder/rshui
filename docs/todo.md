@@ -28,6 +28,7 @@
   "/etc" over "~/.config/$FILE" over "~/.$FILE" over "$CWD/$FILE"
   if no config found, panic
 
+- use new config structs
 - read config file
 - remove source code config
 
