@@ -12,4 +12,6 @@ readme = "README.md"
 publish = false
 
 [dependencies]
-termion="2.*.*"
+serde = {version = "*", features = ["derive"]}
+termion = "2.*.*"
+toml = "0.8.*"

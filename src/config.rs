@@ -1,9 +1,70 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2023  Andy Frank Schoknecht
 
-use crate::color::*;
+use serde::Deserialize;
+use std::io::Read;
+use std::fs::File;
+use std::path::Path;
+
 use crate::menu::*;
 
+const PATH_CFG_ETC: &str = "/etc/hui.toml";
+const PATH_CFG_XDG: &str = "~/.config/hui.toml";
+const PATH_CFG_DOT: &str = "~/.hui.toml";
+const PATH_CFG_LCL: &str = "./hui.toml";
+
+#[derive(Deserialize)]
+pub struct CfgKeys {
+	left: char,
+	down: char,
+	up: char,
+	right: char,
+	execute: char,
+	cmdmode: char,
+	cmdenter: char,
+}
+
+#[derive(Deserialize)]
+pub struct Config<'a> {
+	header: &'a str,
+	
+	entry_menu_prefix: &'a str,
+	entry_menu_postfix: &'a str,
+	entry_shell_prefix: &'a str,
+	entry_shell_postfix: &'a str,
+	
+	keys: CfgKeys,
+	
+	menus: Vec<Menu<'a>>,
+}
+
+impl<'a> Config<'a>
+{
+	pub fn from_file() -> Config<'a>
+	{
+		let cfgstr: String;
+		let cfgpath: &str;
+		let mut f: File; 
+
+		if Path::new(PATH_CFG_ETC).exists() {
+			cfgpath = PATH_CFG_ETC;
+		} else if Path::new(PATH_CFG_XDG).exists() {
+			cfgpath = PATH_CFG_XDG;
+		} else if Path::new(PATH_CFG_DOT).exists() {
+			cfgpath = PATH_CFG_DOT;
+		} else if Path::new(PATH_CFG_LCL).exists() {
+			cfgpath = PATH_CFG_LCL;
+		} else {
+			panic!("No config found.");
+		}
+
+		f = File::open(cfgpath).unwrap();
+		f.read_to_string(&mut cfgstr).unwrap();
+
+		return toml::from_str(cfgstr.as_ref()).unwrap();
+	}
+}
+/*
 pub const HEADER: &str = "Example config\n";
 
 pub const MENU_TESTCHAMBER: Menu = Menu {
@@ -29,11 +90,6 @@ pub const MENU_MAIN: Menu = Menu {
 		Entry {
 			caption: "Show current user",
 			content: EntryContent::Shell("echo \"$USER\""),
-		},
-
-		Entry {
-			caption: "Rust Dummy",
-			content: EntryContent::Rust,
 		},
 
 		Entry {
@@ -155,3 +211,4 @@ pub const KEY_RIGHT: char = 'l';
 pub const KEY_EXECUTE: char = 'L';
 pub const KEY_CMDMODE: char = ':';
 pub const KEY_CMDENTER: char = '\r';
+*/

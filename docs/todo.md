@@ -23,9 +23,11 @@
 
 # v0.2.0
 
-- test ron as config file format, if not toml
-- read priority "/etc" over "~/.config/$FILE" over "~/.$FILE" over "$CWD/$FILE"
-- if no config found, panic
++ write config.rs as toml
++ add config path priority
+  "/etc" over "~/.config/$FILE" over "~/.$FILE" over "$CWD/$FILE"
+  if no config found, panic
+
 - read config file
 - remove source code config
 

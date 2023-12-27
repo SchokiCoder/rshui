@@ -1,0 +1,128 @@
+header = "Example config\n"
+
+entry_menu_prefix =   "> ["
+entry_menu_postfix =  "]"
+entry_shell_prefix =  "> "
+entry_shell_postfix = ""
+
+[keys]
+left = 'h'
+down = 'j'
+up = 'k'
+right = 'l'
+execute = 'L'
+cmdmode = ':'
+cmdenter = '\r'
+
+[[menus]]
+name = "test_chamber"
+title = """
+Test chamber
+------------"""
+
+[menus.entries]
+caption = "Start the rotors"
+shell = "echo \"... very good\""
+
+[[menus]]
+name = "main"
+title = """
+Main Menu
+---------"""
+
+[menus.entries]
+caption = "Test chamber"
+menu = "test_chamber"
+
+[menus.entries]
+caption = "Show current user"
+shell = "echo \"$USER\""
+
+[menus.entries]
+caption = "Clear ~/temp"
+shell = "echo \"\" > ~/temp"
+
+[color]
+[[header.fg]]
+active = false
+r = 255
+g = 255
+b = 255	
+
+[[header.bg]]
+active = false
+r = 30
+g = 30
+b = 30
+
+[[title.fg]]
+active = false
+r = 255
+g = 255
+b = 255
+
+[[title.bg]]
+active = false
+r = 30
+g = 30
+b = 30
+
+[[entry.fg]]
+active = false
+r = 255
+g = 255
+b = 255	
+
+[[entry.bg]]
+active = false
+r = 30
+g = 30
+b = 30	
+
+[[entry_hover.fg]]
+active = true
+r = 0
+g = 0
+b = 0	
+
+[[entry_hover.bg]]
+active = true
+r = 255
+g = 255
+b = 255	
+
+[[cmdline.fg]]
+active = false
+r = 255
+g = 255
+b = 255	
+
+[[cmdline.bg]]
+active = false
+r = 30
+g = 30
+b = 30	
+
+[[feedback.fg]]
+active = true
+r = 160
+g = 160
+b = 160	
+
+[[feedback.bg]]
+active = false
+r = 30
+g = 30
+b = 30	
+
+[[default.fg]]
+active = false
+r = 255
+g = 255
+b = 255	
+
+[[default.bg]]
+active = false
+r = 0
+g = 0
+b = 0	

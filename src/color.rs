@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2023  Andy Frank Schoknecht
 
+use serde::Deserialize;
 use std::fmt;
 
+#[derive(Deserialize)]
 pub struct FgColor {
 	pub active: bool,
 	pub r: u8,
@@ -10,6 +12,7 @@ pub struct FgColor {
 	pub b: u8,
 }
 
+#[derive(Deserialize)]
 pub struct BgColor {
 	pub active: bool,
 	pub r: u8,
