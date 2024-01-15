@@ -28,7 +28,13 @@
   "/etc" over "~/.config/$FILE" over "~/.$FILE" over "$CWD/$FILE"
   if no config found, panic
 
-- use new config structs
++ use new config structs
+
+  Menus are now saved in the config struct via a Hashmap rather than Vec and name
+  field for Menu.
+  This also removes string references (`&str`) with actual `String`'s.
+  This **may** be suboptimal but it works.
+  
 - read config file
 - remove source code config
 

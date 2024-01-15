@@ -2,11 +2,12 @@
 // Copyright (C) 2023  Andy Frank Schoknecht
 
 use serde::Deserialize;
+use std::collections::HashMap;
 use std::io::Read;
 use std::fs::File;
 use std::path::Path;
 
-use crate::color::TextColor;
+use crate::color::*;
 use crate::menu::*;
 
 const PATH_CFG_ETC: &str = "/etc/hui.toml";
@@ -37,26 +38,26 @@ pub struct CfgColors {
 }
 
 #[derive(Deserialize)]
-pub struct Config<'a> {
-	pub header: &'a str,
+pub struct Config {
+	pub header: String,
 	
-	pub entry_menu_prefix: &'a str,
-	pub entry_menu_postfix: &'a str,
-	pub entry_shell_prefix: &'a str,
-	pub entry_shell_postfix: &'a str,
+	pub entry_menu_prefix: String,
+	pub entry_menu_postfix: String,
+	pub entry_shell_prefix: String,
+	pub entry_shell_postfix: String,
 	
 	pub keys: CfgKeys,
 	
-	pub menus: Vec<Menu<'a>>,
+	pub menus: HashMap<String, Menu>,
 	
 	pub colors: CfgColors,
 }
 
-impl<'a> Config<'a>
+impl Config
 {
-	pub fn from_file() -> Config<'a>
+	pub fn from_file() -> Config
 	{
-		let cfgstr: String;
+		/*let mut cfgstr = String::new();
 		let cfgpath: &str;
 		let mut f: File; 
 
@@ -75,6 +76,162 @@ impl<'a> Config<'a>
 		f = File::open(cfgpath).unwrap();
 		f.read_to_string(&mut cfgstr).unwrap();
 
-		return toml::from_str(cfgstr.as_ref()).unwrap();
+		return toml::from_str(cfgstr.as_ref()).unwrap();*/
+
+		return Config {
+			header: "header".to_string(),
+
+			entry_menu_prefix: "> [".to_string(),
+			entry_menu_postfix: "]".to_string(),
+			entry_shell_prefix: "> ".to_string(),
+			entry_shell_postfix: "".to_string(),
+
+			keys: CfgKeys {
+				left: 'h',
+				down: 'j',
+				up: 'k',
+				right: 'l',
+				execute: 'L',
+				cmdmode: ':',
+				cmdenter: '\r',
+			},
+
+			menus: HashMap::from(
+				[
+					(
+						"main".to_string(),
+						Menu {
+							title: "Main menu".to_string(),
+							entries: vec![
+								Entry {
+									caption: "echo hi".to_string(),
+									content: EntryContent::Shell("echo hi".to_string()),
+								},
+
+								Entry {
+									caption: "Submenu".to_string(),
+									content: EntryContent::Menu("submenu".to_string()),
+								},
+							]
+						}
+					),
+
+					(
+						"submenu".to_string(),
+						Menu {
+							title: "Submenu".to_string(),
+							entries: vec![],
+						},
+					),
+				]
+			),
+
+			colors: CfgColors {
+				header: TextColor {
+					fg: FgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+					bg: BgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+				},
+
+				title: TextColor {
+					fg: FgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+					bg: BgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+				},
+
+				entry: TextColor {
+					fg: FgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+					bg: BgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+				},
+
+				entry_hover: TextColor {
+					fg: FgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+					bg: BgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+				},
+
+				cmdline: TextColor {
+					fg: FgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+					bg: BgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+				},
+
+				feedback: TextColor {
+					fg: FgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+					bg: BgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+				},
+
+				std: TextColor {
+					fg: FgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+					bg: BgColor {
+						active: false,
+						r: 0,
+						g: 0,
+						b: 0,
+					},
+				},
+			},
+		}
 	}
 }

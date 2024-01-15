@@ -4,20 +4,19 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub enum EntryContent<'a> {
-	Menu(Menu<'a>),
-	Shell(&'a str),
+pub enum EntryContent {
+	Menu(String),
+	Shell(String),
 }
 
 #[derive(Deserialize)]
-pub struct Entry<'a> {
-	pub caption: &'a str,
-	pub content: EntryContent<'a>,
+pub struct Entry {
+	pub caption: String,
+	pub content: EntryContent,
 }
 
 #[derive(Deserialize)]
-pub struct Menu<'a> {
-	pub name:    &'a str,
-	pub title:   &'a str,
-	pub entries: Vec<Entry<'a>>,
+pub struct Menu {
+	pub title:   String,
+	pub entries: Vec<Entry>,
 }

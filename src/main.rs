@@ -96,22 +96,22 @@ fn draw_lower(cfg: &Config,
 
 fn draw_menu(menu: &Menu, cfg: &Config, cursor: usize)
 {
-	let mut prefix:  &str;
-	let mut caption: &str;
-	let mut postfix: &str;
+	let mut prefix:  &String;
+	let mut caption: &String;
+	let mut postfix: &String;
 
 	for i in 0..menu.entries.len() {
-		caption = menu.entries[i].caption;
+		caption = &menu.entries[i].caption;
 		
 		match menu.entries[i].content {
 		EntryContent::Menu(_) => {
-			prefix  = cfg.entry_menu_prefix;
-			postfix = cfg.entry_menu_postfix;
+			prefix  = &cfg.entry_menu_prefix;
+			postfix = &cfg.entry_menu_postfix;
 		}
 
 		EntryContent::Shell(_) => {
-			prefix  = cfg.entry_shell_prefix;
-			postfix = cfg.entry_shell_postfix;
+			prefix  = &cfg.entry_shell_prefix;
+			postfix = &cfg.entry_shell_postfix;
 		}
 		}
 		
@@ -137,7 +137,7 @@ fn draw_menu(menu: &Menu, cfg: &Config, cursor: usize)
 	}
 }
 
-fn draw_upper(cfg: &Config, title: &str)
+fn draw_upper(cfg: &Config, title: &String)
 {
 	print!("{}{}{}{}{}\n",
 	       cfg.colors.header.fg,
@@ -184,11 +184,12 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 
 fn handle_cmd(cmdline: &mut String,
               active: &mut bool,
+              cfg: &Config,
               cursor: &mut usize,
               feedback: &mut Option<String>,
-              menu_path: &mut Vec<&Menu>)
+              menu_path: &mut Vec<String>)
 {
-	let cur_menu: &Menu = menu_path[menu_path.len() - 1];
+	let cur_menu: &Menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
 	let res_num: Result<usize, std::num::ParseIntError>;
 	let num: usize;
 
@@ -220,72 +221,60 @@ fn handle_cmd(cmdline: &mut String,
 	cmdline.clear();
 }
 
-fn handle_key(key:       char,
+fn handle_key<'a>(key:       char,
               active:    &mut bool,
-              cfg:       &Config,
+              cfg:       &'a Config,
               cmdline:   &mut String,
               cmdmode:   &mut bool,
               cmdoutput: &mut Option<std::process::Output>,
               cursor:    &mut usize,
               feedback:  &mut Option<String>,
-              menu_path: &mut Vec<&Menu>)
+              menu_path: &'a mut Vec<String>)
 {
-	let cur_menu: &Menu = menu_path[menu_path.len() - 1];
+	let cur_menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
 
 	if *cmdmode {
-		match key {
-		SIGINT | SIGTSTP => {
+		if key == SIGINT || key == SIGTSTP {
 			*cmdmode = false;
-		}
-
-		cfg.keys.cmdenter => {
-			handle_cmd(cmdline, active, cursor, feedback, menu_path);
+		} else if key == cfg.keys.cmdenter {
+			handle_cmd(cmdline,
+			           active,
+			           cfg,
+			           cursor,
+			           feedback,
+			           menu_path);
 			*cmdmode = false;
-		}
-
-		_ => {
+		} else {
 			cmdline.push(key);
-		}
 		}
 		
 		return;
 	}
 
-	match key {
-	SIGINT | SIGTSTP | 'q' => {
+	if key == SIGINT || key == SIGTSTP || key == 'q' {
 		*active = false;
-	}
-
-	cfg.keys.down => {
+	} else if key == cfg.keys.down {
 		if *cursor < (cur_menu.entries.len() - 1) {
 			*cursor += 1;
 		}
-	}
-
-	cfg.keys.up => {
+	} else if key == cfg.keys.up {
 		if *cursor > 0 {
 			*cursor -= 1;
 		}
-	}
-	
-	cfg.keys.right => {
-		match cur_menu.entries[*cursor].content {
+	} else if key == cfg.keys.right {
+		match &cur_menu.entries[*cursor].content {
 		EntryContent::Menu(m) => {
-			menu_path.push(&m);
+			menu_path.push(m.to_string());
 		}
 		
 		_ => {}
 		}
-	}
-	
-	cfg.keys.left => {
+	} else if key == cfg.keys.left {
 		if menu_path.len() > 1 {
 			menu_path.pop();
 		}
-	}
-
-	cfg.keys.execute => {
-		match cur_menu.entries[*cursor].content {
+	} else if key == cfg.keys.execute {
+		match &cur_menu.entries[*cursor].content {
 		EntryContent::Shell(cmdstr) => {
 			*cmdoutput = Some(Command::new("sh")
 				.arg("-c")
@@ -296,15 +285,10 @@ fn handle_key(key:       char,
 
 		_ => {}
 		}
-	}
-	
-	cfg.keys.cmdmode => {
+	} else if key == cfg.keys.cmdmode {
 		if *cmdmode == false {
 			*cmdmode = true;
 		}
-	}
-
-	_ => {}
 	}
 }
 
@@ -324,13 +308,13 @@ fn main()
 		termion::raw::RawTerminal<std::io::Stdout>>;
 	let mut term_w: u16;
 	let mut term_h: u16;
-	let mut menu_path: Vec<&Menu> = vec![&cfg.menus[0]];
+	let mut menu_path: Vec<String> = vec!["main".to_string()];
 
 	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
 	stdin = std::io::stdin();
 	
 	while active {
-		let cur_menu: &Menu = menu_path[menu_path.len() - 1];
+		let cur_menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
 
 		(term_w, term_h) = termion::terminal_size().unwrap();
 
@@ -338,7 +322,7 @@ fn main()
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
-		draw_upper(&cfg, cur_menu.title);
+		draw_upper(&cfg, &cur_menu.title);
 		draw_menu(&cur_menu, &cfg, cursor);
 
 		cmdoutput_to_feedback(cmdoutput, &mut feedback);
