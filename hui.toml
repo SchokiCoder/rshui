@@ -19,10 +19,16 @@ Test chamber
 ------------"""
 
 [[menus.test_chamber.entries]]
-caption = "Start the rotors"
+caption = "stdout"
 
 [menus.test_chamber.entries.content]
-Shell = "echo \"... very good\""
+Shell = "echo \"stderr has multiple lines, don't worry\""
+
+[[menus.test_chamber.entries]]
+caption = "stderr"
+
+[menus.test_chamber.entries.content]
+Shell = "cc"
 
 [menus.main]
 title = """

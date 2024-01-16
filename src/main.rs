@@ -17,19 +17,21 @@ use termion::raw::IntoRawMode;
 const SIGINT:  char = '\x03';
 const SIGTSTP: char = '\x04';
 
-fn cmdoutput_to_feedback(cmdoutput: Option<std::process::Output>,
-                         feedback:  &mut Option<String>)
+fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>)
+                         -> Option<String>
 {
-	match cmdoutput {
-	Some(value) => {
-		if value.stderr.len() > 0 {
-			*feedback = Some(String::from_utf8(value.stderr).unwrap());
+	return match cmdoutput {
+	Ok(output) => {
+		if output.stderr.len() > 0 {
+			Some(String::from_utf8(output.stderr).unwrap())
 		} else {
-			*feedback = Some(String::from_utf8(value.stdout).unwrap());
+			Some(String::from_utf8(output.stdout).unwrap())
 		}
 	}
 
-	None => {}
+	Err(e) => {
+		Some(format!("Command output could not be retrieved: {}", e))
+	}
 	};
 }
 
@@ -190,8 +192,6 @@ fn handle_cmd(cmdline: &mut String,
               menu_path: &mut Vec<String>)
 {
 	let cur_menu: &Menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
-	let res_num: Result<usize, std::num::ParseIntError>;
-	let num: usize;
 
 	match cmdline as &str {
 	"q" | "quit" | "exit" => {
@@ -199,11 +199,8 @@ fn handle_cmd(cmdline: &mut String,
 	}
 
 	_ => {
-		res_num = usize::from_str_radix(cmdline.as_ref(), 10);
-		
-		if res_num.is_ok() {
-			num = res_num.unwrap();
-			
+		match usize::from_str_radix(cmdline.as_ref(), 10) {
+		Ok(num) => {
 			if num > 0 {
 				if num > cur_menu.entries.len() {
 					*cursor = cur_menu.entries.len() - 1;
@@ -211,9 +208,12 @@ fn handle_cmd(cmdline: &mut String,
 					*cursor = num - 1;
 				}
 			}
-		} else {
+		},
+
+		Err(_) => {
 			*feedback = Some(format!("Command \"{}\" not recognised",
 			                         cmdline));
+		},
 		}
 	}
 	}
@@ -221,15 +221,14 @@ fn handle_cmd(cmdline: &mut String,
 	cmdline.clear();
 }
 
-fn handle_key<'a>(key:       char,
+fn handle_key(key:       char,
               active:    &mut bool,
-              cfg:       &'a Config,
+              cfg:       &Config,
               cmdline:   &mut String,
               cmdmode:   &mut bool,
-              cmdoutput: &mut Option<std::process::Output>,
               cursor:    &mut usize,
               feedback:  &mut Option<String>,
-              menu_path: &'a mut Vec<String>)
+              menu_path: &mut Vec<String>)
 {
 	let cur_menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
 
@@ -276,11 +275,12 @@ fn handle_key<'a>(key:       char,
 	} else if key == cfg.keys.execute {
 		match &cur_menu.entries[*cursor].content {
 		EntryContent::Shell(cmdstr) => {
-			*cmdoutput = Some(Command::new("sh")
-				.arg("-c")
-				.arg(cmdstr)
-				.output()
-				.unwrap());
+			let cresult = Command::new("sh")
+			                      .arg("-c")
+			                      .arg(cmdstr)
+			                      .output();
+
+			*feedback = cmdoutput_to_feedback(cresult);
 		}
 
 		_ => {}
@@ -300,7 +300,6 @@ fn main()
 	let mut cursor: usize = 0;
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
-	let mut cmdoutput: Option<std::process::Output> = None;
 	let mut feedback: Option<String> = None;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
@@ -325,8 +324,6 @@ fn main()
 		draw_upper(&cfg, &cur_menu.title);
 		draw_menu(&cur_menu, &cfg, cursor);
 
-		cmdoutput_to_feedback(cmdoutput, &mut feedback);
-		cmdoutput = None;
 		draw_lower(&cfg,
 			   &cmdline,
 			   &cmdmode,
@@ -335,16 +332,15 @@ fn main()
 			   term_w,
 			   term_h);
 		
-		stdout.flush().unwrap();
+		stdout.flush().expect("stdout flush failed");
 		stdout.activate_raw_mode().unwrap();
 
-		stdin.read_exact(&mut input).unwrap();
+		stdin.read_exact(&mut input).expect("keyboard read failed");
 		handle_key(input[0] as char,
 		           &mut active,
 		           &cfg,
 		           &mut cmdline,
 		           &mut cmdmode,
-		           &mut cmdoutput,
 		           &mut cursor,
 		           &mut feedback,
 		           &mut menu_path);

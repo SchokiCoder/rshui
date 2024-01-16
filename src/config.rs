@@ -73,9 +73,12 @@ impl Config
 			panic!("No config found.");
 		}
 
-		f = File::open(cfgpath).unwrap();
-		f.read_to_string(&mut cfgstr).unwrap();
+		f = File::open(cfgpath)
+		         .expect("config file could not be opened");
+		f.read_to_string(&mut cfgstr)
+		 .expect("config file could not be read");
 
-		return toml::from_str(cfgstr.as_ref()).unwrap();
+		return toml::from_str(cfgstr.as_ref())
+		            .expect("config file could not be parsed");
 	}
 }
