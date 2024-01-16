@@ -1,127 +1,131 @@
 header = "Example config\n"
-
 entry_menu_prefix =   "> ["
 entry_menu_postfix =  "]"
 entry_shell_prefix =  "> "
 entry_shell_postfix = ""
 
 [keys]
-left = 'h'
-down = 'j'
-up = 'k'
-right = 'l'
-execute = 'L'
-cmdmode = ':'
-cmdenter = '\r'
+left = "h"
+down = "j"
+up = "k"
+right = "l"
+execute = "L"
+cmdmode = ":"
+cmdenter = "\r"
 
-[[menus]]
-name = "test_chamber"
+[menus.test_chamber]
 title = """
 Test chamber
 ------------"""
 
-[menus.entries]
+[[menus.test_chamber.entries]]
 caption = "Start the rotors"
-shell = "echo \"... very good\""
 
-[[menus]]
-name = "main"
+[menus.test_chamber.entries.content]
+Shell = "echo \"... very good\""
+
+[menus.main]
 title = """
 Main Menu
 ---------"""
 
-[menus.entries]
+[[menus.main.entries]]
 caption = "Test chamber"
-menu = "test_chamber"
 
-[menus.entries]
+[menus.main.entries.content]
+Menu = "test_chamber"
+
+[[menus.main.entries]]
 caption = "Show current user"
-shell = "echo \"$USER\""
 
-[menus.entries]
+[menus.main.entries.content]
+Shell = "echo \"$USER\""
+
+[[menus.main.entries]]
 caption = "Clear ~/temp"
-shell = "echo \"\" > ~/temp"
 
-[colors]
-[[header.fg]]
+[menus.main.entries.content]
+Shell = "echo \"\" > ~/temp"
+
+[colors.header.fg]
 active = false
 r = 255
 g = 255
 b = 255	
 
-[[header.bg]]
+[colors.header.bg]
 active = false
 r = 30
 g = 30
 b = 30
 
-[[title.fg]]
+[colors.title.fg]
 active = false
 r = 255
 g = 255
 b = 255
 
-[[title.bg]]
+[colors.title.bg]
 active = false
 r = 30
 g = 30
 b = 30
 
-[[entry.fg]]
+[colors.entry.fg]
 active = false
 r = 255
 g = 255
 b = 255	
 
-[[entry.bg]]
+[colors.entry.bg]
 active = false
 r = 30
 g = 30
 b = 30	
 
-[[entry_hover.fg]]
+[colors.entry_hover.fg]
 active = true
 r = 0
 g = 0
 b = 0	
 
-[[entry_hover.bg]]
+[colors.entry_hover.bg]
 active = true
 r = 255
 g = 255
 b = 255	
 
-[[cmdline.fg]]
+[colors.cmdline.fg]
 active = false
 r = 255
 g = 255
 b = 255	
 
-[[cmdline.bg]]
+[colors.cmdline.bg]
 active = false
 r = 30
 g = 30
 b = 30	
 
-[[feedback.fg]]
+[colors.feedback.fg]
 active = true
 r = 160
 g = 160
 b = 160	
 
-[[feedback.bg]]
+[colors.feedback.bg]
 active = false
 r = 30
 g = 30
 b = 30	
 
-[[std.fg]]
+[colors.std.fg]
 active = false
 r = 255
 g = 255
 b = 255	
 
-[[std.bg]]
+[colors.std.bg]
 active = false
 r = 0
 g = 0

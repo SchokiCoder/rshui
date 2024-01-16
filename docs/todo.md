@@ -35,8 +35,16 @@
   This also removes string references (`&str`) with actual `String`'s.
   This **may** be suboptimal but it works.
   
-- read config file
-- remove source code config
++ add config file read and adjust toml to new Hashmap
+
+  Also remove source code config.
+
+- replace unwraps
+- config suckiness
+	- config demands EntryContent as "Shell" or "Menu"
+	  (only CamelCase keys in cfg)
+	- toml looks a bit disjointed with the new HashMap design
+	  maybe ron is better?
 
 # v0.1.0
 
