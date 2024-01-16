@@ -125,7 +125,24 @@ fn main()
 }
 ```
 
-This is quite ugly... maybe `}}` or `} }` is better?  
+This is really always ugly, so instead raise the end bracket of the case:  
+
+```Rust
+return match Butt {
+Sun => {
+	"Celestia"
+	}
+
+Moon => {
+	"Luna"
+	}
+
+_ => {}
+}
+```
+
+With that, it only gets ugly when there is a bracket at the end of a case.  
+This is only sometimes ugly.  
 
 # Function nesting
 

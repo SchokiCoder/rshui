@@ -43,19 +43,9 @@
 
   Including a rewrite for cmdoutput.
 
-- fix feedback not being emptied by a command with no output
-- update code style regarding match case brackets and apply to code
-```
-match foo {
-bar => {
-	do();
-	}
++ update code style regarding match case brackets and apply to code
 
-_ => {
-	sauce();
-	}
-}
-```
+- fix feedback not being emptied by a command with no output
 
 - config suckiness
 	- config demands EntryContent as "Shell" or "Menu"

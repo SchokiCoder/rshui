@@ -27,11 +27,11 @@ fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>
 		} else {
 			Some(String::from_utf8(output.stdout).unwrap())
 		}
-	}
+		}
 
 	Err(e) => {
 		Some(format!("Command output could not be retrieved: {}", e))
-	}
+		}
 	};
 }
 
@@ -40,11 +40,11 @@ fn draw_feedback(feedback: &Option<String>, cfg: &Config, term_w: u16)
 	let fb_str = match feedback {
 	Some(x) => {
 		x
-	}
+		}
 	
 	None => {
 		return;
-	}
+		}
 	};
 
 	let fb_str = fb_str.trim_end();
@@ -109,12 +109,12 @@ fn draw_menu(menu: &Menu, cfg: &Config, cursor: usize)
 		EntryContent::Menu(_) => {
 			prefix  = &cfg.entry_menu_prefix;
 			postfix = &cfg.entry_menu_postfix;
-		}
+			}
 
 		EntryContent::Shell(_) => {
 			prefix  = &cfg.entry_shell_prefix;
 			postfix = &cfg.entry_shell_postfix;
-		}
+			}
 		}
 		
 		if i == cursor {
@@ -170,7 +170,7 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 		'\r' | '\n' => {
 			ret += 1;
 			x = 0;
-		}
+			}
 
 		_ => { x += 1; }
 		}
@@ -196,7 +196,7 @@ fn handle_cmd(cmdline: &mut String,
 	match cmdline as &str {
 	"q" | "quit" | "exit" => {
 		*active = false;
-	}
+		}
 
 	_ => {
 		match usize::from_str_radix(cmdline.as_ref(), 10) {
@@ -208,14 +208,14 @@ fn handle_cmd(cmdline: &mut String,
 					*cursor = num - 1;
 				}
 			}
-		},
+			},
 
 		Err(_) => {
 			*feedback = Some(format!("Command \"{}\" not recognised",
 			                         cmdline));
-		},
+			},
 		}
-	}
+		}
 	}
 	
 	cmdline.clear();
@@ -264,7 +264,7 @@ fn handle_key(key:       char,
 		match &cur_menu.entries[*cursor].content {
 		EntryContent::Menu(m) => {
 			menu_path.push(m.to_string());
-		}
+			}
 		
 		_ => {}
 		}
@@ -281,7 +281,7 @@ fn handle_key(key:       char,
 			                      .output();
 
 			*feedback = cmdoutput_to_feedback(cresult);
-		}
+			}
 
 		_ => {}
 		}
