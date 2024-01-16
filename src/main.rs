@@ -184,12 +184,13 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 	ret
 }
 
+#[must_use]
 fn handle_cmd(cmdline: &mut String,
               active: &mut bool,
               cfg: &Config,
               cursor: &mut usize,
-              feedback: &mut Option<String>,
               menu_path: &mut Vec<String>)
+              -> Option<String> // feedback is returned
 {
 	let cur_menu: &Menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
 
@@ -211,14 +212,15 @@ fn handle_cmd(cmdline: &mut String,
 			},
 
 		Err(_) => {
-			*feedback = Some(format!("Command \"{}\" not recognised",
-			                         cmdline));
+			return Some(format!("Command \"{}\" not recognised",
+			                    cmdline));
 			},
 		}
 		}
 	}
 	
 	cmdline.clear();
+	return None;
 }
 
 fn handle_key(key:       char,
@@ -236,11 +238,10 @@ fn handle_key(key:       char,
 		if key == SIGINT || key == SIGTSTP {
 			*cmdmode = false;
 		} else if key == cfg.keys.cmdenter {
-			handle_cmd(cmdline,
+			*feedback = handle_cmd(cmdline,
 			           active,
 			           cfg,
 			           cursor,
-			           feedback,
 			           menu_path);
 			*cmdmode = false;
 		} else {

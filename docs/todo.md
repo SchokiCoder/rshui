@@ -45,7 +45,7 @@
 
 + update code style regarding match case brackets and apply to code
 
-- fix feedback not being emptied by a command with no output
++ fix feedback not being emptied by a cmdline command with no output
 
 - config suckiness
 	- config demands EntryContent as "Shell" or "Menu"
