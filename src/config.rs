@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Copyright (C) 2023  Andy Frank Schoknecht
+// Copyright (C) 2023 - 2024  Andy Frank Schoknecht
 
 use serde::Deserialize;
 use std::collections::HashMap;

@@ -49,11 +49,10 @@
 
 + fix menu navigation not resetting the cursor
 
-- config suckiness
-	- config demands EntryContent as "Shell" or "Menu"
-	  (only CamelCase keys in cfg)
-	- toml looks a bit disjointed with the new HashMap design
-	  maybe ron is better?
++ add better toml format example
++ set version to 0.2.0
+  
+  Also update copyright.
 
 # v0.1.0
 
