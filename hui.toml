@@ -20,15 +20,11 @@ Test chamber
 
 [[menus.test_chamber.entries]]
 caption = "stdout"
-
-[menus.test_chamber.entries.content]
-Shell = "echo \"stderr has multiple lines, don't worry\""
+content = {Shell = "echo \"stderr has multiple lines, don't worry\""}
 
 [[menus.test_chamber.entries]]
 caption = "stderr"
-
-[menus.test_chamber.entries.content]
-Shell = "cc"
+content = {Shell = "cc"}
 
 [menus.main]
 title = """
@@ -37,21 +33,15 @@ Main Menu
 
 [[menus.main.entries]]
 caption = "Show current user"
-
-[menus.main.entries.content]
-Shell = "echo \"$USER\""
+content = {Shell = "echo \"$USER\""}
 
 [[menus.main.entries]]
 caption = "Test chamber"
-
-[menus.main.entries.content]
-Menu = "test_chamber"
+content = {Menu = "test_chamber"}
 
 [[menus.main.entries]]
 caption = "Clear ~/temp"
-
-[menus.main.entries.content]
-Shell = "echo \"\" > ~/temp"
+content = {Shell = "echo \"\" > ~/temp"}
 
 [colors.header.fg]
 active = false
