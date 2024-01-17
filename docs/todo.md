@@ -47,6 +47,8 @@
 
 + fix feedback not being emptied by a cmdline command with no output
 
++ fix menu navigation not resetting the cursor
+
 - config suckiness
 	- config demands EntryContent as "Shell" or "Menu"
 	  (only CamelCase keys in cfg)

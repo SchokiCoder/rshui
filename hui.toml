@@ -36,16 +36,16 @@ Main Menu
 ---------"""
 
 [[menus.main.entries]]
-caption = "Test chamber"
-
-[menus.main.entries.content]
-Menu = "test_chamber"
-
-[[menus.main.entries]]
 caption = "Show current user"
 
 [menus.main.entries.content]
 Shell = "echo \"$USER\""
+
+[[menus.main.entries]]
+caption = "Test chamber"
+
+[menus.main.entries.content]
+Menu = "test_chamber"
 
 [[menus.main.entries]]
 caption = "Clear ~/temp"

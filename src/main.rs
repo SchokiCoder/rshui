@@ -265,6 +265,7 @@ fn handle_key(key:       char,
 		match &cur_menu.entries[*cursor].content {
 		EntryContent::Menu(m) => {
 			menu_path.push(m.to_string());
+			*cursor = 0;
 			}
 		
 		_ => {}
@@ -272,6 +273,7 @@ fn handle_key(key:       char,
 	} else if key == cfg.keys.left {
 		if menu_path.len() > 1 {
 			menu_path.pop();
+			*cursor = 0;
 		}
 	} else if key == cfg.keys.execute {
 		match &cur_menu.entries[*cursor].content {
