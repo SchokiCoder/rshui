@@ -3,6 +3,8 @@ entry_menu_prefix =   "> ["
 entry_menu_postfix =  "]"
 entry_shell_prefix =  "> "
 entry_shell_postfix = ""
+entry_shellsession_prefix =  "> <"
+entry_shellsession_postfix = ">"
 
 [keys]
 left = "h"
@@ -25,6 +27,10 @@ content = {Shell = "echo \"stderr has multiple lines, don't worry\""}
 [[menus.test_chamber.entries]]
 caption = "stderr"
 content = {Shell = "cc"}
+
+[[menus.test_chamber.entries]]
+caption = "vi ~/temp"
+content = {ShellSession = "vi ~/temp"}
 
 [menus.main]
 title = """

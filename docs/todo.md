@@ -17,9 +17,15 @@
 
 # v0.3.0
 
-- child process execution test vim (maybe it already works)
++ add support for child process execution with mainloop
 - add courier
 - give hui multiline feedback to courier
+
+- Maybe the ShellSession execution part can be modified to feasibly cover normal
+  Shell execution, thus making it possible to remove the ShellSession vs Shell
+  thing from the config.
+  Using the Shell enum but giving something like vi, will freeze the terminal
+  until SIGTERM.
 
 # v0.2.0
 

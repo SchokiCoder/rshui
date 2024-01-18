@@ -45,6 +45,8 @@ pub struct Config {
 	pub entry_menu_postfix: String,
 	pub entry_shell_prefix: String,
 	pub entry_shell_postfix: String,
+	pub entry_shellsession_prefix: String,
+	pub entry_shellsession_postfix: String,
 	
 	pub keys: CfgKeys,
 	

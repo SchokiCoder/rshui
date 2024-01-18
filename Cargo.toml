@@ -13,5 +13,5 @@ publish = false
 
 [dependencies]
 serde = {version = "*", features = ["derive"]}
-termion = "2.*.*"
+termion = "3.*.*"
 toml = "0.8.*"

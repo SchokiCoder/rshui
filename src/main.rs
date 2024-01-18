@@ -115,6 +115,11 @@ fn draw_menu(menu: &Menu, cfg: &Config, cursor: usize)
 			prefix  = &cfg.entry_shell_prefix;
 			postfix = &cfg.entry_shell_postfix;
 			}
+
+		EntryContent::ShellSession(_) => {
+			prefix  = &cfg.entry_shellsession_prefix;
+			postfix = &cfg.entry_shellsession_postfix;
+			}
 		}
 		
 		if i == cursor {
@@ -284,6 +289,28 @@ fn handle_key(key:       char,
 			                      .output();
 
 			*feedback = cmdoutput_to_feedback(cresult);
+			}
+
+		EntryContent::ShellSession(cmdstr) => {
+			let cmdspawn = Command::new("sh")
+			                       .stdout(std::io::stdout())
+			                       .arg("-c")
+			                       .arg(cmdstr)
+			                       .spawn();
+			match cmdspawn {
+			Ok(child) => {
+				match child.wait_with_output() {
+				Ok(_) => {}
+				Err(_) => {
+					Some("Couldn't run child process.".to_string());
+					}
+				}
+				}
+
+			Err(_) => {
+				*feedback = Some("Couldn't spawn child process.".to_string());
+				}
+			}
 			}
 
 		_ => {}

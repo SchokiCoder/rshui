@@ -7,6 +7,7 @@ use serde::Deserialize;
 pub enum EntryContent {
 	Menu(String),
 	Shell(String),
+	ShellSession(String),
 }
 
 #[derive(Deserialize)]
