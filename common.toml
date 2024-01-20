@@ -1,0 +1,68 @@
+[colors.header.fg]
+active = false
+r = 255
+g = 255
+b = 255	
+
+[colors.header.bg]
+active = false
+r = 30
+g = 30
+b = 30
+
+[colors.title.fg]
+active = false
+r = 255
+g = 255
+b = 255
+
+[colors.title.bg]
+active = false
+r = 30
+g = 30
+b = 30	
+
+[colors.cmdline.fg]
+active = false
+r = 255
+g = 255
+b = 255	
+
+[colors.cmdline.bg]
+active = false
+r = 30
+g = 30
+b = 30	
+
+[colors.feedback.fg]
+active = true
+r = 160
+g = 160
+b = 160	
+
+[colors.feedback.bg]
+active = false
+r = 30
+g = 30
+b = 30	
+
+[colors.std.fg]
+active = false
+r = 255
+g = 255
+b = 255	
+
+[colors.std.bg]
+active = false
+r = 0
+g = 0
+b = 0	
+
+[keys]
+left = "h"
+down = "j"
+up = "k"
+right = "l"
+cmdmode = ":"
+cmdenter = "\r"
+quit = "q"
