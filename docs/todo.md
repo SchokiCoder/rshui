@@ -18,6 +18,13 @@
 # v0.3.0
 
 + add support for child process execution with mainloop
+
++ split cfg code from hui
+
+  Also add quit key to config (oversight).
+
+- test hui with common cfg and hui cfg
+
 - add courier
 - give hui multiline feedback to courier
 

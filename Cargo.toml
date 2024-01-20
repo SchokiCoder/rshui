@@ -1,8 +1,15 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 # Copyright (C) 2023 - 2024  Andy Frank Schoknecht
 
-[package]
-name = "hui"
+[workspace]
+members = [
+	"hui",
+#	"courier",
+	"common",
+]
+resolver = "2"
+
+[workspace.package]
 version = "0.2.0"
 authors = ["SchokiCoder <afschoknecht@tutanota.com>"]
 repository = "https://github.com/SchokiCoder/rshui"
@@ -11,7 +18,7 @@ license = "GPL-2.0-or-later"
 readme = "README.md"
 publish = false
 
-[dependencies]
+[workspace.dependencies]
 serde = {version = "*", features = ["derive"]}
-termion = "3.*.*"
+termion = "3.0.*"
 toml = "0.8.*"

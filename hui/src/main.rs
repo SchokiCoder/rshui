@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2023 - 2024  Andy Frank Schoknecht
 
-mod menu;
-mod color;
 mod config;
+mod menu;
 
-use crate::config::Config;
+use crate::config::HuiCfg;
 use crate::menu::*;
 
+use common::config::ComCfg;
 use std::io::{Read, Write};
 use std::process::Command;
 use termion::{clear, cursor};
 use termion::cursor::{DetectCursorPos, HideCursor};
 use termion::raw::IntoRawMode;
-
-const SIGINT:  char = '\x03';
-const SIGTSTP: char = '\x04';
 
 fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>)
                          -> Option<String>
@@ -35,7 +32,7 @@ fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>
 	};
 }
 
-fn draw_feedback(feedback: &Option<String>, cfg: &Config, term_w: u16)
+fn draw_feedback(feedback: &Option<String>, cfg: &HuiCfg, term_w: u16)
 {
 	let fb_str = match feedback {
 	Some(x) => {
@@ -51,7 +48,7 @@ fn draw_feedback(feedback: &Option<String>, cfg: &Config, term_w: u16)
 	if get_needed_lines(fb_str, term_w as usize) != 1 {
 		return;
 	}
-	
+
 	print!("{}{}{}{}{}",
 	       cfg.colors.feedback.fg,
 	       cfg.colors.feedback.bg,
@@ -60,7 +57,7 @@ fn draw_feedback(feedback: &Option<String>, cfg: &Config, term_w: u16)
 	       cfg.colors.std.bg);
 }
 
-fn draw_lower(cfg: &Config,
+fn draw_lower(cfg: &HuiCfg,
 	      cmdline: &String,
               cmdmode: &bool,
               feedback: &Option<String>,
@@ -96,7 +93,7 @@ fn draw_lower(cfg: &Config,
 	}
 }
 
-fn draw_menu(menu: &Menu, cfg: &Config, cursor: usize)
+fn draw_menu(menu: &Menu, cfg: &HuiCfg, cursor: usize)
 {
 	let mut prefix:  &String;
 	let mut caption: &String;
@@ -144,7 +141,7 @@ fn draw_menu(menu: &Menu, cfg: &Config, cursor: usize)
 	}
 }
 
-fn draw_upper(cfg: &Config, title: &String)
+fn draw_upper(cfg: &HuiCfg, title: &String)
 {
 	print!("{}{}{}{}{}\n",
 	       cfg.colors.header.fg,
@@ -192,7 +189,7 @@ fn get_needed_lines(s: &str, line_width: usize) -> usize
 #[must_use]
 fn handle_cmd(cmdline: &mut String,
               active: &mut bool,
-              cfg: &Config,
+              cfg: &HuiCfg,
               cursor: &mut usize,
               menu_path: &mut Vec<String>)
               -> Option<String> // feedback is returned
@@ -230,22 +227,23 @@ fn handle_cmd(cmdline: &mut String,
 
 fn handle_key(key:       char,
               active:    &mut bool,
-              cfg:       &Config,
+              comcfg:    &ComCfg,
+              huicfg:    &HuiCfg,
               cmdline:   &mut String,
               cmdmode:   &mut bool,
               cursor:    &mut usize,
               feedback:  &mut Option<String>,
               menu_path: &mut Vec<String>)
 {
-	let cur_menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
+	let cur_menu = &huicfg.menus[&menu_path[menu_path.len() - 1]];
 
 	if *cmdmode {
-		if key == SIGINT || key == SIGTSTP {
+		if key == common::SIGINT || key == common::SIGTSTP {
 			*cmdmode = false;
-		} else if key == cfg.keys.cmdenter {
+		} else if key == comcfg.keys.cmdenter {
 			*feedback = handle_cmd(cmdline,
 			           active,
-			           cfg,
+			           huicfg,
 			           cursor,
 			           menu_path);
 			*cmdmode = false;
@@ -256,17 +254,19 @@ fn handle_key(key:       char,
 		return;
 	}
 
-	if key == SIGINT || key == SIGTSTP || key == 'q' {
+	if key == common::SIGINT ||
+	   key == common::SIGTSTP ||
+	   key == comcfg.keys.quit {
 		*active = false;
-	} else if key == cfg.keys.down {
+	} else if key == comcfg.keys.down {
 		if *cursor < (cur_menu.entries.len() - 1) {
 			*cursor += 1;
 		}
-	} else if key == cfg.keys.up {
+	} else if key == comcfg.keys.up {
 		if *cursor > 0 {
 			*cursor -= 1;
 		}
-	} else if key == cfg.keys.right {
+	} else if key == comcfg.keys.right {
 		match &cur_menu.entries[*cursor].content {
 		EntryContent::Menu(m) => {
 			menu_path.push(m.to_string());
@@ -275,12 +275,12 @@ fn handle_key(key:       char,
 		
 		_ => {}
 		}
-	} else if key == cfg.keys.left {
+	} else if key == comcfg.keys.left {
 		if menu_path.len() > 1 {
 			menu_path.pop();
 			*cursor = 0;
 		}
-	} else if key == cfg.keys.execute {
+	} else if key == huicfg.keys.execute {
 		match &cur_menu.entries[*cursor].content {
 		EntryContent::Shell(cmdstr) => {
 			let cresult = Command::new("sh")
@@ -315,7 +315,7 @@ fn handle_key(key:       char,
 
 		_ => {}
 		}
-	} else if key == cfg.keys.cmdmode {
+	} else if key == comcfg.keys.cmdmode {
 		if *cmdmode == false {
 			*cmdmode = true;
 		}
@@ -324,7 +324,8 @@ fn handle_key(key:       char,
 
 fn main()
 {
-	let cfg = config::Config::from_file();
+	let comcfg = ComCfg::from_file();
+	let huicfg = HuiCfg::from_file();
 	
 	let mut active: bool = true;
 	let mut cursor: usize = 0;
@@ -343,7 +344,7 @@ fn main()
 	stdin = std::io::stdin();
 	
 	while active {
-		let cur_menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
+		let cur_menu = &huicfg.menus[&menu_path[menu_path.len() - 1]];
 
 		(term_w, term_h) = termion::terminal_size().unwrap();
 
@@ -351,10 +352,10 @@ fn main()
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
-		draw_upper(&cfg, &cur_menu.title);
-		draw_menu(&cur_menu, &cfg, cursor);
+		draw_upper(&huicfg, &cur_menu.title);
+		draw_menu(&cur_menu, &huicfg, cursor);
 
-		draw_lower(&cfg,
+		draw_lower(&huicfg,
 			   &cmdline,
 			   &cmdmode,
 			   &feedback,
@@ -368,7 +369,8 @@ fn main()
 		stdin.read_exact(&mut input).expect("keyboard read failed");
 		handle_key(input[0] as char,
 		           &mut active,
-		           &cfg,
+		           &comcfg,
+		           &huicfg,
 		           &mut cmdline,
 		           &mut cmdmode,
 		           &mut cursor,
