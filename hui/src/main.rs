@@ -32,7 +32,7 @@ fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>
 	};
 }
 
-fn draw_feedback(feedback: &Option<String>, cfg: &HuiCfg, term_w: u16)
+fn draw_feedback(feedback: &Option<String>, comcfg: &ComCfg, term_w: u16)
 {
 	let fb_str = match feedback {
 	Some(x) => {
@@ -50,14 +50,14 @@ fn draw_feedback(feedback: &Option<String>, cfg: &HuiCfg, term_w: u16)
 	}
 
 	print!("{}{}{}{}{}",
-	       cfg.colors.feedback.fg,
-	       cfg.colors.feedback.bg,
+	       comcfg.colors.feedback.fg,
+	       comcfg.colors.feedback.bg,
 	       fb_str,
-	       cfg.colors.std.fg,
-	       cfg.colors.std.bg);
+	       comcfg.colors.std.fg,
+	       comcfg.colors.std.bg);
 }
 
-fn draw_lower(cfg: &HuiCfg,
+fn draw_lower(comcfg: &ComCfg,
 	      cmdline: &String,
               cmdmode: &bool,
               feedback: &Option<String>,
@@ -76,24 +76,24 @@ fn draw_lower(cfg: &HuiCfg,
 	}
 	
 	print!("{}{}:{}{}",
-	       cfg.colors.feedback.fg,
-	       cfg.colors.feedback.bg,
-	       cfg.colors.std.fg,
-	       cfg.colors.std.bg);
+	       comcfg.colors.feedback.fg,
+	       comcfg.colors.feedback.bg,
+	       comcfg.colors.std.fg,
+	       comcfg.colors.std.bg);
 
 	if *cmdmode {
 		print!("{}{}{}{}{}",
-		       cfg.colors.cmdline.fg,
-		       cfg.colors.cmdline.bg,
+		       comcfg.colors.cmdline.fg,
+		       comcfg.colors.cmdline.bg,
 		       cmdline,
-		       cfg.colors.std.fg,
-		       cfg.colors.std.bg);
+		       comcfg.colors.std.fg,
+		       comcfg.colors.std.bg);
 	} else {
-		draw_feedback(feedback, cfg, term_w);
+		draw_feedback(feedback, comcfg, term_w);
 	}
 }
 
-fn draw_menu(menu: &Menu, cfg: &HuiCfg, cursor: usize)
+fn draw_menu(menu: &Menu, comcfg: &ComCfg, huicfg: &HuiCfg, cursor: usize)
 {
 	let mut prefix:  &String;
 	let mut caption: &String;
@@ -104,58 +104,58 @@ fn draw_menu(menu: &Menu, cfg: &HuiCfg, cursor: usize)
 		
 		match menu.entries[i].content {
 		EntryContent::Menu(_) => {
-			prefix  = &cfg.entry_menu_prefix;
-			postfix = &cfg.entry_menu_postfix;
+			prefix  = &huicfg.entry_menu_prefix;
+			postfix = &huicfg.entry_menu_postfix;
 			}
 
 		EntryContent::Shell(_) => {
-			prefix  = &cfg.entry_shell_prefix;
-			postfix = &cfg.entry_shell_postfix;
+			prefix  = &huicfg.entry_shell_prefix;
+			postfix = &huicfg.entry_shell_postfix;
 			}
 
 		EntryContent::ShellSession(_) => {
-			prefix  = &cfg.entry_shellsession_prefix;
-			postfix = &cfg.entry_shellsession_postfix;
+			prefix  = &huicfg.entry_shellsession_prefix;
+			postfix = &huicfg.entry_shellsession_postfix;
 			}
 		}
 		
 		if i == cursor {
 			print!("{}{}{}{}{}{}{}\n",
-			       cfg.colors.entry_hover.fg,
-			       cfg.colors.entry_hover.bg,
+			       huicfg.colors.entry_hover.fg,
+			       huicfg.colors.entry_hover.bg,
 			       prefix,
 			       caption,
 			       postfix,
-			       cfg.colors.std.fg,
-			       cfg.colors.std.bg);
+			       comcfg.colors.std.fg,
+			       comcfg.colors.std.bg);
 		} else {
 			print!("{}{}{}{}{}{}{}\n",
-			       cfg.colors.entry.fg,
-			       cfg.colors.entry.bg,
+			       huicfg.colors.entry.fg,
+			       huicfg.colors.entry.bg,
 			       prefix,
 			       caption,
 			       postfix,
-			       cfg.colors.std.fg,
-			       cfg.colors.std.bg);
+			       comcfg.colors.std.fg,
+			       comcfg.colors.std.bg);
 		}
 	}
 }
 
-fn draw_upper(cfg: &HuiCfg, title: &String)
+fn draw_upper(comcfg: &ComCfg, huicfg: &HuiCfg, title: &String)
 {
 	print!("{}{}{}{}{}\n",
-	       cfg.colors.header.fg,
-	       cfg.colors.header.bg,
-	       cfg.header,
-	       cfg.colors.std.fg,
-	       cfg.colors.std.bg);
+	       comcfg.colors.header.fg,
+	       comcfg.colors.header.bg,
+	       huicfg.header,
+	       comcfg.colors.std.fg,
+	       comcfg.colors.std.bg);
 
 	print!("{}{}{}{}{}\n",
-	       cfg.colors.title.fg,
-	       cfg.colors.title.bg,
+	       comcfg.colors.title.fg,
+	       comcfg.colors.title.bg,
 	       title,
-	       cfg.colors.std.fg,
-	       cfg.colors.std.bg);
+	       comcfg.colors.std.fg,
+	       comcfg.colors.std.bg);
 }
 
 fn get_needed_lines(s: &str, line_width: usize) -> usize
@@ -352,10 +352,10 @@ fn main()
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
-		draw_upper(&huicfg, &cur_menu.title);
-		draw_menu(&cur_menu, &huicfg, cursor);
+		draw_upper(&comcfg, &huicfg, &cur_menu.title);
+		draw_menu(&cur_menu, &comcfg, &huicfg, cursor);
 
-		draw_lower(&huicfg,
+		draw_lower(&comcfg,
 			   &cmdline,
 			   &cmdmode,
 			   &feedback,

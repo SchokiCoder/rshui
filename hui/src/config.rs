@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2023 - 2024  Andy Frank Schoknecht
 
-use common::config::{CfgColors, read_cfg_file};
+use common::color::TextColor;
+use common::config::{read_cfg_file};
 use serde::Deserialize;
 use std::collections::HashMap;
 
@@ -12,6 +13,12 @@ const PATH_CFGPOSTFIX_HUI: &str = "hui.toml";
 #[derive(Deserialize)]
 pub struct CfgKeys {
 	pub execute: char,
+}
+
+#[derive(Deserialize)]
+pub struct CfgColors {
+	pub entry: TextColor,
+	pub entry_hover: TextColor,
 }
 
 #[derive(Deserialize)]

@@ -22,7 +22,6 @@ pub struct CfgKeys {
 	pub down: char,
 	pub up: char,
 	pub right: char,
-	pub execute: char,
 	pub cmdmode: char,
 	pub cmdenter: char,
 	pub quit: char,
@@ -32,8 +31,6 @@ pub struct CfgKeys {
 pub struct CfgColors {
 	pub header: TextColor,
 	pub title: TextColor,
-	pub entry: TextColor,
-	pub entry_hover: TextColor,
 	pub cmdline: TextColor,
 	pub feedback: TextColor,
 	pub std: TextColor,

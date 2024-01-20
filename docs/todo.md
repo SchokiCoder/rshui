@@ -23,10 +23,16 @@
 
   Also add quit key to config (oversight).
 
-- test hui with common cfg and hui cfg
++ add split old cfg into common cfg and hui cfg
++ fix use of wrong configs
 
 - add courier
 - give hui multiline feedback to courier
+
+- add feedback for when hitting "right" on a shell entry or "execute" on a menu
+  entry
+  "Entry type is \"menu\", cannot execute."
+  "Entry type is \"shell\", cannot enter."
 
 - Maybe the ShellSession execution part can be modified to feasibly cover normal
   Shell execution, thus making it possible to remove the ShellSession vs Shell
