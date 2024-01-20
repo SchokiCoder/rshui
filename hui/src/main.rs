@@ -7,6 +7,7 @@ mod menu;
 use crate::config::HuiCfg;
 use crate::menu::*;
 
+use common::*;
 use common::config::ComCfg;
 use std::io::{Read, Write};
 use std::process::Command;
@@ -139,23 +140,6 @@ fn draw_menu(menu: &Menu, comcfg: &ComCfg, huicfg: &HuiCfg, cursor: usize)
 			       comcfg.colors.std.bg);
 		}
 	}
-}
-
-fn draw_upper(comcfg: &ComCfg, huicfg: &HuiCfg, title: &String)
-{
-	print!("{}{}{}{}{}\n",
-	       comcfg.colors.header.fg,
-	       comcfg.colors.header.bg,
-	       huicfg.header,
-	       comcfg.colors.std.fg,
-	       comcfg.colors.std.bg);
-
-	print!("{}{}{}{}{}\n",
-	       comcfg.colors.title.fg,
-	       comcfg.colors.title.bg,
-	       title,
-	       comcfg.colors.std.fg,
-	       comcfg.colors.std.bg);
 }
 
 fn get_needed_lines(s: &str, line_width: usize) -> usize
@@ -352,7 +336,7 @@ fn main()
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
-		draw_upper(&comcfg, &huicfg, &cur_menu.title);
+		draw_upper(&comcfg, &huicfg.header, &cur_menu.title);
 		draw_menu(&cur_menu, &comcfg, &huicfg, cursor);
 
 		draw_lower(&comcfg,

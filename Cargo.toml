@@ -4,7 +4,7 @@
 [workspace]
 members = [
 	"hui",
-#	"courier",
+	"courier",
 	"common",
 ]
 resolver = "2"

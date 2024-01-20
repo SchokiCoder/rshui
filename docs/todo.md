@@ -15,6 +15,17 @@
 - install scripts
 - update README.md#Install
 
+# please add to goals of all HUI's and then reposition
+
+- add feedback for when hitting "right" on a shell entry or "execute" on a menu
+  entry
+  "Entry type is \"menu\", cannot execute."
+  "Entry type is \"shell\", cannot enter."
+- handle return key in cmdline
+- add cursor for each menu in menu_path
+  Thus a "left" key press would send you to the menu entry that you entered.
+- some other nice QOL things?
+
 # v0.3.0
 
 + add support for child process execution with mainloop
@@ -24,15 +35,28 @@
   Also add quit key to config (oversight).
 
 + add split old cfg into common cfg and hui cfg
-+ fix use of wrong configs
++ finalize cfg split
 
-- add courier
++ courier
+	+ courier: add basic drawing
+
+- just suspend raw mode when entering cmdline to get better input for free?
+  Wow... i didn't think of that earlier.
+  That just hit me when prototyping courier while it has no raw mode yet.
+
+- courier
+	- courier: add raw mode
+	- courier: add draw_lower
+	- courier: add content draw line check
+	  
+	  This is for limiting the lines that can be printed at once.
+
+	- courier: add scroll
+	- courier: add read file argument
+	- courier: add optional title argument
+	- courier: add content piping
+
 - give hui multiline feedback to courier
-
-- add feedback for when hitting "right" on a shell entry or "execute" on a menu
-  entry
-  "Entry type is \"menu\", cannot execute."
-  "Entry type is \"shell\", cannot enter."
 
 - Maybe the ShellSession execution part can be modified to feasibly cover normal
   Shell execution, thus making it possible to remove the ShellSession vs Shell
