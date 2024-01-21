@@ -13,7 +13,7 @@ use std::io::{Read, Write};
 use std::process::Command;
 use termion::{clear, cursor};
 use termion::cursor::{DetectCursorPos, HideCursor};
-use termion::raw::IntoRawMode;
+use termion::raw::{IntoRawMode, RawTerminal};
 
 fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>)
                          -> Option<String>
@@ -318,8 +318,7 @@ fn main()
 	let mut feedback: Option<String> = None;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
-	let mut stdout: termion::cursor::HideCursor<
-		termion::raw::RawTerminal<std::io::Stdout>>;
+	let mut stdout: HideCursor<RawTerminal<std::io::Stdout>>;
 	let mut term_w: u16;
 	let mut term_h: u16;
 	let mut menu_path: Vec<String> = vec!["main".to_string()];

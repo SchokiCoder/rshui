@@ -7,40 +7,61 @@ use crate::config::CouCfg;
 
 use common::*;
 use common::config::ComCfg;
-use std::io::{Read};
+use std::io::{Read, Write};
 use termion::{clear, cursor};
+use termion::cursor::{HideCursor};
+use termion::raw::{IntoRawMode, RawTerminal};
 
 fn draw_content(content: &str)
 {
 	print!("{}", content)
 }
 
+fn handle_key(key:       char,
+              active:    &mut bool,
+              comcfg:    &ComCfg,
+//              cmdline:   &mut String,
+//              cmdmode:   &mut bool,
+//              feedback:  &mut Option<String>
+		)
+{
+	if key == common::SIGINT ||
+	   key == common::SIGTSTP ||
+	   key == comcfg.keys.quit {
+		*active = false;
+	}
+}
+
 fn main()
 {
 	let comcfg = ComCfg::from_file();
 	let coucfg = CouCfg::from_file();
+	let title: String;
 	
 	let mut active = true;
 	let content: String;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
-	let title: String;
+	let mut stdout: HideCursor<RawTerminal<std::io::Stdout>>;
 	
 	content = "test1\ntest2\ntest3\n".to_string();
 	stdin = std::io::stdin();
+	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
 	title = "Your ad could be here, for now!".to_string();
 
 	while active {
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
+		stdout.suspend_raw_mode().unwrap();
 
 		draw_upper(&comcfg, &coucfg.header, &title);
 		draw_content(&content);
-
+		
+		stdout.flush().expect("stdout flush failed");
+		stdout.activate_raw_mode().unwrap();
+		
 		stdin.read_exact(&mut input).expect("keyboard read failed");
 
-		if input[0] as char == 'q' {
-			active = false;
-		}
+		handle_key(input[0] as char, &mut active, &comcfg);
 	}
 }

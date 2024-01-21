@@ -37,16 +37,14 @@
 + add split old cfg into common cfg and hui cfg
 + finalize cfg split
 
-+ courier
-	+ courier: add basic drawing
-
-- just suspend raw mode when entering cmdline to get better input for free?
-  Wow... i didn't think of that earlier.
-  That just hit me when prototyping courier while it has no raw mode yet.
++ just suspend raw mode when entering cmdline to get better input for free?
+  No, because SIG handling is _not_ possible, i think.
 
 - courier
-	- courier: add raw mode
+	+ courier: add basic drawing
+	+ courier: add raw mode
 	- courier: add draw_lower
+	- courier: add cmdline
 	- courier: add content draw line check
 	  
 	  This is for limiting the lines that can be printed at once.
