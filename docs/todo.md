@@ -54,6 +54,8 @@
 	- courier: add optional title argument
 	- courier: add content piping
 
+- update matches to comply with code_style
+
 - give hui multiline feedback to courier
 
 - Maybe the ShellSession execution part can be modified to feasibly cover normal

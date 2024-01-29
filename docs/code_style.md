@@ -125,24 +125,23 @@ fn main()
 }
 ```
 
-This is really always ugly, so instead raise the end bracket of the case:  
+So why not just raise the bracket of the case?  
+This would only have two brackets next to each other if the last case needs a
+bracket.  
+For me it turns out that this inconsistency lets my brain hiccup, once i read
+that. So from now on, put the brackets right smack dab next to each other on the
+same line.  
 
 ```Rust
-return match Butt {
-Sun => {
-	"Celestia"
-	}
-
-Moon => {
-	"Luna"
-	}
-
-_ => {}
+return match funny_number {
+69 => {
+	print!("...are you entertained yet?");
 }
-```
 
-With that, it only gets ugly when there is a bracket at the end of a case.  
-This is only sometimes ugly.  
+43 => {
+	print!("Don't worry i will not go as far as Thorium did.");
+}}
+```
 
 # Function nesting
 
