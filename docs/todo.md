@@ -53,6 +53,7 @@
 	- courier: add read file argument
 	- courier: add optional title argument
 	- courier: add content piping
+	- are all variables of mut var block actually mutable?
 
 - update matches to comply with code_style
 

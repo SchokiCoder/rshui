@@ -37,12 +37,17 @@ fn main()
 	let comcfg = ComCfg::from_file();
 	let coucfg = CouCfg::from_file();
 	let title: String;
-	
+
 	let mut active = true;
+	let cmdline: String = String::new();
+	let cmdmode: bool = false;
 	let content: String;
+	let feedback: Option<String> = None;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
 	let mut stdout: HideCursor<RawTerminal<std::io::Stdout>>;
+	let mut term_w: u16;
+	let mut term_h: u16;
 	
 	content = "test1\ntest2\ntest3\n".to_string();
 	stdin = std::io::stdin();
@@ -50,12 +55,21 @@ fn main()
 	title = "Your ad could be here, for now!".to_string();
 
 	while active {
+		(term_w, term_h) = termion::terminal_size().unwrap();
+
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
 		draw_upper(&comcfg, &coucfg.header, &title);
 		draw_content(&content);
+		draw_lower(&comcfg,
+			   &cmdline,
+			   &cmdmode,
+			   &feedback,
+			   &mut stdout,
+			   term_w,
+			   term_h);
 		
 		stdout.flush().expect("stdout flush failed");
 		stdout.activate_raw_mode().unwrap();
