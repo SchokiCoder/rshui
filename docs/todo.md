@@ -43,8 +43,8 @@
 - courier
 	+ courier: add basic drawing
 	+ courier: add raw mode
-	- courier: add draw_lower
-	- courier: add cmdline
+	+ courier: add draw_lower
+	+ courier: add cmdline
 	- courier: add content draw line check
 	  
 	  This is for limiting the lines that can be printed at once.
@@ -54,6 +54,8 @@
 	- courier: add optional title argument
 	- courier: add content piping
 	- are all variables of mut var block actually mutable?
+
+- hui: fix Unrecognised command not clearing cmdline
 
 - update matches to comply with code_style
 

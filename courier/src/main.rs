@@ -17,18 +17,71 @@ fn draw_content(content: &str)
 	print!("{}", content)
 }
 
+#[must_use]
+fn handle_cmd(cmdline: &mut String,
+              active: &mut bool)
+              -> Option<String> // feedback is returned
+{
+	let mut ret: Option<String> = None;
+	
+	match cmdline as &str {
+	"q" | "quit" | "exit" => {
+		*active = false;
+		}
+
+	_ => {
+/*	TODO change for scroll later
+	
+		match usize::from_str_radix(cmdline.as_ref(), 10) {
+		Ok(num) => {
+			if num > 0 {
+				if num > cur_menu.entries.len() {
+					*cursor = cur_menu.entries.len() - 1;
+				} else {
+					*cursor = num - 1;
+				}
+			}
+			},
+
+		Err(_) => {
+			return Some(format!("Command \"{}\" not recognised",
+			                    cmdline));
+			},
+		}*/
+		ret = Some(format!("Command \"{}\" not recognised", cmdline));
+		}
+	}
+	
+	cmdline.clear();
+	return ret;
+}
+
 fn handle_key(key:       char,
               active:    &mut bool,
               comcfg:    &ComCfg,
-//              cmdline:   &mut String,
-//              cmdmode:   &mut bool,
-//              feedback:  &mut Option<String>
-		)
+              cmdline:   &mut String,
+              cmdmode:   &mut bool,
+              feedback:  &mut Option<String>)
 {
+	if *cmdmode {
+		if key == common::SIGINT || key == common::SIGTSTP {
+			*cmdmode = false;
+		} else if key == comcfg.keys.cmdenter {
+			*feedback = handle_cmd(cmdline, active);
+			*cmdmode = false;
+		} else {
+			cmdline.push(key);
+		}
+		
+		return;
+	}
+	
 	if key == common::SIGINT ||
 	   key == common::SIGTSTP ||
 	   key == comcfg.keys.quit {
 		*active = false;
+	} else if key == comcfg.keys.cmdmode {
+		*cmdmode = true;
 	}
 }
 
@@ -39,10 +92,10 @@ fn main()
 	let title: String;
 
 	let mut active = true;
-	let cmdline: String = String::new();
-	let cmdmode: bool = false;
+	let mut cmdline: String = String::new();
+	let mut cmdmode: bool = false;
 	let content: String;
-	let feedback: Option<String> = None;
+	let mut feedback: Option<String> = None;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
 	let mut stdout: HideCursor<RawTerminal<std::io::Stdout>>;
@@ -76,6 +129,11 @@ fn main()
 		
 		stdin.read_exact(&mut input).expect("keyboard read failed");
 
-		handle_key(input[0] as char, &mut active, &comcfg);
+		handle_key(input[0] as char,
+		           &mut active,
+		           &comcfg,
+		           &mut cmdline,
+		           &mut cmdmode,
+		           &mut feedback);
 	}
 }

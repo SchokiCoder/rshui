@@ -137,10 +137,10 @@ fn handle_key(key:       char,
 			*cmdmode = false;
 		} else if key == comcfg.keys.cmdenter {
 			*feedback = handle_cmd(cmdline,
-			           active,
-			           huicfg,
-			           cursor,
-			           menu_path);
+			                       active,
+			                       huicfg,
+			                       cursor,
+			                       menu_path);
 			*cmdmode = false;
 		} else {
 			cmdline.push(key);
