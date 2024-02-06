@@ -56,6 +56,8 @@
 	- are all variables of mut var block actually mutable?
 
 - hui: fix Unrecognised command not clearing cmdline
+- feedback needed_lines detection probably doesn't account for the cmdline
+  prefix
 
 - update matches to comply with code_style
 
