@@ -9,12 +9,28 @@ use common::*;
 use common::config::ComCfg;
 use std::io::{Read, Write};
 use termion::{clear, cursor};
-use termion::cursor::{HideCursor};
-use termion::raw::{IntoRawMode, RawTerminal};
+use termion::cursor::{DetectCursorPos, HideCursor};
+use termion::raw::{IntoRawMode};
 
-fn draw_content(content: &str)
+fn draw_content(comcfg: &ComCfg,
+                coucfg: &CouCfg,
+                content: &Vec<String>,
+                available_lines: u16)
 {
-	print!("{}", content)
+	let mut i: u16 = 0;
+	
+	for line in content {
+		print!("{}{}{}{}{}\n",
+		       coucfg.colors.content.fg,
+		       coucfg.colors.content.bg,
+		       line,
+		       comcfg.colors.std.fg,
+		       comcfg.colors.std.bg);
+		i += 1;
+		if i >= available_lines {
+			break;
+		}
+	}
 }
 
 #[must_use]
@@ -94,28 +110,40 @@ fn main()
 	let mut active = true;
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
-	let content: String;
+	let mut content = Vec::<String>::new();
 	let mut feedback: Option<String> = None;
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
-	let mut stdout: HideCursor<RawTerminal<std::io::Stdout>>;
-	let mut term_w: u16;
+	let mut term_w: u16 = 0;
 	let mut term_h: u16;
-	
-	content = "test1\ntest2\ntest3\n".to_string();
+	let mut term_w_old: u16;
+	let mut term_y: u16;
+
 	stdin = std::io::stdin();
-	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
+	let mut stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
 	title = "Your ad could be here, for now!".to_string();
 
 	while active {
+		term_w_old = term_w;
 		(term_w, term_h) = termion::terminal_size().unwrap();
+		if term_w_old != term_w {
+			content = split_by_lines("test1\ntest2\ntest3\n", term_w);
+		}
 
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
 		draw_upper(&comcfg, &coucfg.header, &title);
-		draw_content(&content);
+
+		term_y = stdout.cursor_pos()
+		               .expect("Couldn't get cursor position")
+		               .1;
+		draw_content(&comcfg,
+		             &coucfg,
+		             &content,
+		             term_h - term_y - 1 - 1);
+
 		draw_lower(&comcfg,
 			   &cmdline,
 			   &cmdmode,

@@ -23,7 +23,7 @@ pub fn draw_feedback(feedback: &Option<String>, comcfg: &ComCfg, term_w: u16)
 	};
 
 	let fb_str = fb_str.trim_end();
-	if get_needed_lines(fb_str, term_w as usize) != 1 {
+	if split_by_lines(fb_str, term_w).len() != 1 {
 		return;
 	}
 
@@ -88,30 +88,36 @@ pub fn draw_upper(comcfg: &ComCfg, header: &str, title: &str)
 	       comcfg.colors.std.bg);
 }
 
-pub fn get_needed_lines(s: &str, line_width: usize) -> usize
+pub fn split_by_lines(s: &str, line_width: u16) -> Vec<String>
 {
-	let mut ret: usize = 1;
+	let mut cut: usize = 0;
+	let mut ret = Vec::<String>::new();
 	let mut x: usize = 0;
 
 	if s.len() == 0 {
-		return 0;
+		return ret;
 	}
 
 	for c in s.bytes() {
+		x += 1;
+		
 		match c as char {
 		'\r' | '\n' => {
-			ret += 1;
+			ret.push(s[cut..(cut + x - 1)].to_string());
+			cut += x;
 			x = 0;
 			}
 
-		_ => { x += 1; }
+		_ => {}
 		}
 
-		if x > line_width {
+		if x > line_width as usize {
+			ret.push(s[cut..(cut + x - 1)].to_string());
+			cut += x;
 			x = 0;
-			ret += 1;
 		}
 	}
-
-	ret
+	
+	ret.push(s[cut..(cut + x)].to_string());
+	return ret;
 }

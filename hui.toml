@@ -40,7 +40,7 @@ Test chamber
 
 [[menus.test_chamber.entries]]
 caption = "stdout"
-content = {Shell = "echo \"stderr has multiple lines, don't worry\""}
+content = {Shell = "echo \"lies\""}
 
 [[menus.test_chamber.entries]]
 caption = "stderr"
@@ -66,3 +66,4 @@ content = {Menu = "test_chamber"}
 [[menus.main.entries]]
 caption = "Clear ~/temp"
 content = {Shell = "echo \"\" > ~/temp"}
+
