@@ -11,10 +11,10 @@ use std::io::{Read, Write};
 use termion::{clear, cursor};
 use termion::raw::{IntoRawMode};
 
-fn draw_content(comcfg: &ComCfg,
+fn draw_content(available_lines: u16,
+                comcfg: &ComCfg,
                 coucfg: &CouCfg,
-                content: &Vec<String>,
-                available_lines: u16)
+                content: &Vec<String>)
 {
 	let mut i: u16 = 0;
 	
@@ -230,13 +230,13 @@ test\n", term_w);
 
 		draw_upper(&comcfg, &header_lines, &title_lines);
 
-		draw_content(&comcfg,
-		             &coucfg,
-		             &content,
-		             term_h -
+		draw_content(term_h -
 		             header_lines.len() as u16 -
 		             title_lines.len() as u16 -
-		             1 - 1);
+		             1 - 1,
+		             &comcfg,
+		             &coucfg,
+		             &content);
 
 		draw_lower(&comcfg,
 			   &cmdline,

@@ -32,13 +32,32 @@ fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>
 	};
 }
 
-fn draw_menu(menu: &Menu, comcfg: &ComCfg, huicfg: &HuiCfg, cursor: usize)
+fn draw_menu(available_lines: u16,
+             menu: &Menu,
+             comcfg: &ComCfg,
+             huicfg: &HuiCfg,
+             cursor: usize)
 {
-	let mut prefix:  &String;
 	let mut caption: &String;
+	let mut entry_index_begin: usize;
+	let mut entry_index_end: usize;
+	let mut prefix:  &String;
 	let mut postfix: &String;
 
-	for i in 0..menu.entries.len() {
+	if available_lines < menu.entries.len() as u16 {
+		entry_index_begin = cursor;
+		entry_index_end = cursor + available_lines as usize;
+		
+		if entry_index_end >= menu.entries.len() {
+			entry_index_begin -= entry_index_end - menu.entries.len();
+			entry_index_end -= entry_index_end - menu.entries.len();
+		}
+	} else {
+		entry_index_begin = 0;
+		entry_index_end = menu.entries.len();
+	}
+	
+	for i in entry_index_begin..entry_index_end {
 		caption = &menu.entries[i].caption;
 		
 		match menu.entries[i].content {
@@ -255,7 +274,14 @@ fn main()
 		stdout.suspend_raw_mode().unwrap();
 
 		draw_upper(&comcfg, &header_lines, &title_lines);
-		draw_menu(&cur_menu, &comcfg, &huicfg, cursor);
+		draw_menu(term_h -
+		          header_lines.len() as u16 -
+		          title_lines.len() as u16 -
+		          1 - 1,
+		          &cur_menu,
+		          &comcfg,
+		          &huicfg,
+		          cursor);
 		draw_lower(&comcfg,
 			   &cmdline,
 			   &cmdmode,

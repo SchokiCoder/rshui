@@ -15,6 +15,8 @@
   macro?
   Do i even still need that with GPL2?
 
+- hui: fix entries being longer than a line causing overflows in available_space 
+
 - mangen?
 - config file manpage
 - hui manpage
@@ -49,7 +51,7 @@
   
 This is for limiting the lines that can be printed at once.
 
-- hui: add needed_lines awareness for entries
++ hui: add needed_lines awareness for entries
 
 - courier: add scroll
 - courier: add read file argument
