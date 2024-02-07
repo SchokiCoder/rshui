@@ -46,6 +46,42 @@ fn draw_content(content_height: usize,
 }
 
 #[must_use]
+fn get_content(filepath: Option<String>) -> String {
+	let mut f:    fs::File;
+	let mut ret = String::new();
+
+	let fp = match filepath {
+	Some(tmp) => {
+		tmp
+	},
+	
+	None => {
+		// TODO
+		panic!("TODO implement piping");
+	}};
+
+	let result = fs::File::open(&fp);
+	f = match result {
+	Ok(f) => {
+		f
+	}
+	
+	Err(_) => {
+		panic!("Could not open file \"{}\"", fp);
+	}};
+	
+	let result = f.read_to_string(&mut ret);
+	match result {
+	Ok(_) => {}
+	
+	Err(_) => {
+		panic!("Could not read file \"{}\"", fp);
+	}}
+	
+	return ret;
+}
+
+#[must_use]
 fn handle_cmd(active:            &mut bool,
               cmdline:           &mut String,
               content_lines_len: usize,
@@ -125,46 +161,21 @@ fn handle_key(key:               char,
 }
 
 #[must_use]
-fn parse_args() -> String /* content */ {
-	let filepath: String;
-	
+fn parse_args() -> String /* content */ {	
 	let mut args: env::Args;
-	let mut f:    fs::File;
-	let mut ret = String::new();
+	let mut filepath: Option<String> = None;
 
 	args = env::args();
 	
-	if args.len() <= 1 {
-		// TODO
-		panic!("TODO implement piping");
+	if args.len() > 1 {
+		filepath = match args.nth(1) {
+		Some(tmp) => Some(tmp),
+		None => {
+			panic!("Filepath argument doesn't exist");
+		}};
 	}
 	
-	filepath = match args.nth(1) {
-	Some(tmp) => tmp,
-	None => {
-		panic!("Filepath argument doesn't exist");
-	}};
-	
-	
-	let result = fs::File::open(&filepath);
-	f = match result {
-	Ok(f) => {
-		f
-	}
-	
-	Err(_) => {
-		panic!("Could not open file \"{}\"", filepath);
-	}};
-	
-	let result = f.read_to_string(&mut ret);
-	match result {
-	Ok(_) => {}
-	
-	Err(_) => {
-		panic!("Could not read file \"{}\"", filepath);
-	}}
-	
-	return ret;
+	return get_content(filepath);
 }
 
 fn main()
