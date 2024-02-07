@@ -32,7 +32,7 @@ fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>
 	};
 }
 
-fn draw_menu(available_lines: u16,
+fn draw_menu(content_height: usize,
              menu: &Menu,
              comcfg: &ComCfg,
              huicfg: &HuiCfg,
@@ -44,9 +44,9 @@ fn draw_menu(available_lines: u16,
 	let mut prefix:  &String;
 	let mut postfix: &String;
 
-	if available_lines < menu.entries.len() as u16 {
+	if content_height < menu.entries.len() {
 		entry_index_begin = cursor;
-		entry_index_end = cursor + available_lines as usize;
+		entry_index_end = cursor + content_height;
 		
 		if entry_index_end >= menu.entries.len() {
 			entry_index_begin -= entry_index_end - menu.entries.len();
@@ -244,6 +244,7 @@ fn main()
 	let mut cursor: usize = 0;
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
+	let mut content_height: usize;
 	let mut feedback: Option<String> = None;
 	let mut header_lines = Vec::<String>::new();
 	let mut input: [u8; 1] = [0];
@@ -268,16 +269,17 @@ fn main()
 			header_lines = split_by_lines(&huicfg.header, term_w);
 			title_lines = split_by_lines(&cur_menu.title, term_w);
 		}
+		content_height = term_h as usize -
+		                 header_lines.len() -
+		                 title_lines.len() -
+		                 1 - 1;
 
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
 		draw_upper(&comcfg, &header_lines, &title_lines);
-		draw_menu(term_h -
-		          header_lines.len() as u16 -
-		          title_lines.len() as u16 -
-		          1 - 1,
+		draw_menu(content_height,
 		          &cur_menu,
 		          &comcfg,
 		          &huicfg,

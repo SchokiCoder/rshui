@@ -11,24 +11,35 @@ use std::io::{Read, Write};
 use termion::{clear, cursor};
 use termion::raw::{IntoRawMode};
 
-fn draw_content(available_lines: u16,
-                comcfg: &ComCfg,
-                coucfg: &CouCfg,
-                content: &Vec<String>)
-{
-	let mut i: u16 = 0;
+fn draw_content(content_height: usize,
+                comcfg:         &ComCfg,
+                coucfg:         &CouCfg,
+                content:        &Vec<String>,
+                scroll:         usize)
+{	
+	let mut line_index_begin: usize;
+	let mut line_index_end: usize;
+
+	if content_height < content.len() {
+		line_index_begin = scroll;
+		line_index_end = scroll + content_height;
+		
+		if line_index_end >= content.len() {
+			line_index_begin -= line_index_end - content.len();
+			line_index_end -= line_index_end - content.len();
+		}
+	} else {
+		line_index_begin = 0;
+		line_index_end = content.len();
+	} 
 	
-	for line in content {
+	for i in line_index_begin..line_index_end {
 		print!("{}{}{}{}{}\n",
 		       coucfg.colors.content.fg,
 		       coucfg.colors.content.bg,
-		       line,
+		       content[i],
 		       comcfg.colors.std.fg,
 		       comcfg.colors.std.bg);
-		i += 1;
-		if i >= available_lines {
-			break;
-		}
 	}
 }
 
@@ -71,12 +82,14 @@ fn handle_cmd(cmdline: &mut String,
 	return ret;
 }
 
-fn handle_key(key:       char,
-              active:    &mut bool,
-              comcfg:    &ComCfg,
-              cmdline:   &mut String,
-              cmdmode:   &mut bool,
-              feedback:  &mut Option<String>)
+fn handle_key(key:          char,
+              active:       &mut bool,
+              comcfg:       &ComCfg,
+              cmdline:      &mut String,
+              cmdmode:      &mut bool,
+              feedback:     &mut Option<String>,
+              scroll_limit: usize,
+              scroll:       &mut usize)
 {
 	if *cmdmode {
 		if key == common::SIGINT || key == common::SIGTSTP {
@@ -95,6 +108,14 @@ fn handle_key(key:       char,
 	   key == common::SIGTSTP ||
 	   key == comcfg.keys.quit {
 		*active = false;
+	} else if key == comcfg.keys.up {
+		if *scroll > 0 {
+			*scroll -= 1;
+		}
+	} else if key == comcfg.keys.down {
+		if *scroll < scroll_limit {
+			*scroll += 1;
+		}
 	} else if key == comcfg.keys.cmdmode {
 		*cmdmode = true;
 	}
@@ -110,9 +131,11 @@ fn main()
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
 	let mut content = Vec::<String>::new();
+	let mut content_height: usize;
 	let mut feedback: Option<String> = None;
 	let mut header_lines = Vec::<String>::new();
 	let mut input: [u8; 1] = [0];
+	let mut scroll: usize = 0;
 	let mut stdin: std::io::Stdin;
 	let mut term_w: u16 = 0;
 	let mut term_w_old: u16;
@@ -223,6 +246,10 @@ test\n", term_w);
 			header_lines = split_by_lines(&coucfg.header, term_w);
 			title_lines = split_by_lines(&title, term_w);
 		}
+		content_height = term_h as usize -
+		                 header_lines.len() -
+		                 title_lines.len() -
+		                 1 - 1;
 
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
@@ -230,13 +257,11 @@ test\n", term_w);
 
 		draw_upper(&comcfg, &header_lines, &title_lines);
 
-		draw_content(term_h -
-		             header_lines.len() as u16 -
-		             title_lines.len() as u16 -
-		             1 - 1,
+		draw_content(content_height,
 		             &comcfg,
 		             &coucfg,
-		             &content);
+		             &content,
+		             scroll);
 
 		draw_lower(&comcfg,
 			   &cmdline,
@@ -256,6 +281,8 @@ test\n", term_w);
 		           &comcfg,
 		           &mut cmdline,
 		           &mut cmdmode,
-		           &mut feedback);
+		           &mut feedback,
+		           content.len() - content_height,
+		           &mut scroll);
 	}
 }

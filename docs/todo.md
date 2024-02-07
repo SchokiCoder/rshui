@@ -53,7 +53,10 @@ This is for limiting the lines that can be printed at once.
 
 + hui: add needed_lines awareness for entries
 
-- courier: add scroll
++ courier: add scroll
+
+Also minor code readability improvement for both hui and courier.
+
 - courier: add read file argument
 - courier: add optional title argument
 - courier: add content piping
