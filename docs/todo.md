@@ -57,6 +57,9 @@ This is for limiting the lines that can be printed at once.
 
 Also minor code readability improvement for both hui and courier.
 
++ update matches to comply with code_style
+
+- courier: add scroll via entered cmdline number
 - courier: add read file argument
 - courier: add optional title argument
 - courier: add content piping
@@ -69,8 +72,6 @@ Also minor code readability improvement for both hui and courier.
   function, so i can get my work done
   
   Doesn't cause detect_cursor issues but still ugly and over engineered.
-
-- update matches to comply with code_style
 
 - give hui multiline feedback to courier
 

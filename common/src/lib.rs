@@ -15,12 +15,11 @@ pub fn draw_feedback(feedback: &Option<String>, comcfg: &ComCfg, term_w: u16)
 	let fb_str = match feedback {
 	Some(x) => {
 		x
-		}
+	}
 	
 	None => {
 		return;
-		}
-	};
+	}}
 
 	let fb_str = fb_str.trim_end();
 	if split_by_lines(fb_str, term_w).len() != 1 {
@@ -112,7 +111,7 @@ pub fn split_by_lines(s: &str, line_width: u16) -> Vec<String>
 			ret.push(s[cut..(cut + x - 1)].to_string());
 			cut += x;
 			x = 0;
-			}
+		}
 
 		_ => {}
 		}

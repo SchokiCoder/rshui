@@ -24,12 +24,11 @@ fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>
 		} else {
 			Some(String::from_utf8(output.stdout).unwrap())
 		}
-		}
+	}
 
 	Err(e) => {
 		Some(format!("Command output could not be retrieved: {}", e))
-		}
-	};
+	}}
 }
 
 fn draw_menu(content_height: usize,
@@ -64,18 +63,17 @@ fn draw_menu(content_height: usize,
 		EntryContent::Menu(_) => {
 			prefix  = &huicfg.entry_menu_prefix;
 			postfix = &huicfg.entry_menu_postfix;
-			}
+		}
 
 		EntryContent::Shell(_) => {
 			prefix  = &huicfg.entry_shell_prefix;
 			postfix = &huicfg.entry_shell_postfix;
-			}
+		}
 
 		EntryContent::ShellSession(_) => {
 			prefix  = &huicfg.entry_shellsession_prefix;
 			postfix = &huicfg.entry_shellsession_postfix;
-			}
-		}
+		}}
 		
 		if i == cursor {
 			print!("{}{}{}{}{}{}{}\n",
@@ -112,7 +110,7 @@ fn handle_cmd(cmdline: &mut String,
 	match cmdline as &str {
 	"q" | "quit" | "exit" => {
 		*active = false;
-		}
+	}
 
 	_ => {
 		match usize::from_str_radix(cmdline.as_ref(), 10) {
@@ -124,15 +122,13 @@ fn handle_cmd(cmdline: &mut String,
 					*cursor = num - 1;
 				}
 			}
-			},
+		}
 
 		Err(_) => {
 			return Some(format!("Command \"{}\" not recognised",
 			                    cmdline));
-			},
-		}
-		}
-	}
+		}}
+	}}
 	
 	cmdline.clear();
 	return None;
@@ -184,7 +180,7 @@ fn handle_key(key:       char,
 		EntryContent::Menu(m) => {
 			menu_path.push(m.to_string());
 			*cursor = 0;
-			}
+		}
 		
 		_ => {}
 		}
@@ -202,7 +198,7 @@ fn handle_key(key:       char,
 			                      .output();
 
 			*feedback = cmdoutput_to_feedback(cresult);
-			}
+		}
 
 		EntryContent::ShellSession(cmdstr) => {
 			let cmdspawn = Command::new("sh")
@@ -216,15 +212,13 @@ fn handle_key(key:       char,
 				Ok(_) => {}
 				Err(_) => {
 					Some("Couldn't run child process.".to_string());
-					}
-				}
-				}
+				}}
+			}
 
 			Err(_) => {
 				*feedback = Some("Couldn't spawn child process.".to_string());
-				}
-			}
-			}
+			}}
+		}
 
 		_ => {}
 		}

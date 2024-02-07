@@ -53,7 +53,7 @@ fn handle_cmd(cmdline: &mut String,
 	match cmdline as &str {
 	"q" | "quit" | "exit" => {
 		*active = false;
-		}
+	}
 
 	_ => {
 /*	TODO change for scroll later
@@ -75,8 +75,7 @@ fn handle_cmd(cmdline: &mut String,
 			},
 		}*/
 		ret = Some(format!("Command \"{}\" not recognised", cmdline));
-		}
-	}
+	}}
 	
 	cmdline.clear();
 	return ret;

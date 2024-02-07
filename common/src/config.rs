@@ -52,14 +52,13 @@ impl ComCfg
 		match res {
 		Ok(ret) => {
 			return ret;
-			}
+		}
 
 		Err(e) => {
 			panic!("Config \"{}\" could not be parsed: {}",
 			       PATH_CFGPOSTFIX_COMMON,
 			       e);
-			}
-		}
+		}}
 	}
 }
 
