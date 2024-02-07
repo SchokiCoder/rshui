@@ -19,7 +19,7 @@ pub fn draw_feedback(feedback: &Option<String>, comcfg: &ComCfg, term_w: u16)
 	
 	None => {
 		return;
-	}}
+	}};
 
 	let fb_str = fb_str.trim_end();
 	if split_by_lines(fb_str, term_w).len() != 1 {

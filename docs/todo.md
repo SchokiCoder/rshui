@@ -59,7 +59,7 @@ Also minor code readability improvement for both hui and courier.
 
 + update matches to comply with code_style
 
-- courier: add scroll via entered cmdline number
++ courier: add scroll via entered cmdline number
 - courier: add read file argument
 - courier: add optional title argument
 - courier: add content piping

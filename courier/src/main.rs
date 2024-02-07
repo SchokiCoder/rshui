@@ -14,38 +14,40 @@ use termion::raw::{IntoRawMode};
 fn draw_content(content_height: usize,
                 comcfg:         &ComCfg,
                 coucfg:         &CouCfg,
-                content:        &Vec<String>,
+                content_lines:  &Vec<String>,
                 scroll:         usize)
 {	
 	let mut line_index_begin: usize;
 	let mut line_index_end: usize;
 
-	if content_height < content.len() {
+	if content_height < content_lines.len() {
 		line_index_begin = scroll;
 		line_index_end = scroll + content_height;
 		
-		if line_index_end >= content.len() {
-			line_index_begin -= line_index_end - content.len();
-			line_index_end -= line_index_end - content.len();
+		if line_index_end >= content_lines.len() {
+			line_index_begin -= line_index_end - content_lines.len();
+			line_index_end -= line_index_end - content_lines.len();
 		}
 	} else {
 		line_index_begin = 0;
-		line_index_end = content.len();
+		line_index_end = content_lines.len();
 	} 
 	
 	for i in line_index_begin..line_index_end {
 		print!("{}{}{}{}{}\n",
 		       coucfg.colors.content.fg,
 		       coucfg.colors.content.bg,
-		       content[i],
+		       content_lines[i],
 		       comcfg.colors.std.fg,
 		       comcfg.colors.std.bg);
 	}
 }
 
 #[must_use]
-fn handle_cmd(cmdline: &mut String,
-              active: &mut bool)
+fn handle_cmd(active:            &mut bool,
+              cmdline:           &mut String,
+              content_lines_len: usize,
+              scroll:            &mut usize)
               -> Option<String> // feedback is returned
 {
 	let mut ret: Option<String> = None;
@@ -56,45 +58,45 @@ fn handle_cmd(cmdline: &mut String,
 	}
 
 	_ => {
-/*	TODO change for scroll later
-	
 		match usize::from_str_radix(cmdline.as_ref(), 10) {
 		Ok(num) => {
 			if num > 0 {
-				if num > cur_menu.entries.len() {
-					*cursor = cur_menu.entries.len() - 1;
+				if num > content_lines_len {
+					*scroll = content_lines_len - 1;
 				} else {
-					*cursor = num - 1;
+					*scroll = num - 1;
 				}
 			}
-			},
+		}
 
 		Err(_) => {
-			return Some(format!("Command \"{}\" not recognised",
-			                    cmdline));
-			},
-		}*/
-		ret = Some(format!("Command \"{}\" not recognised", cmdline));
+			ret = Some(format!("Command \"{}\" not recognised",
+			                   cmdline));
+		}}
 	}}
 	
 	cmdline.clear();
 	return ret;
 }
 
-fn handle_key(key:          char,
-              active:       &mut bool,
-              comcfg:       &ComCfg,
-              cmdline:      &mut String,
-              cmdmode:      &mut bool,
-              feedback:     &mut Option<String>,
-              scroll_limit: usize,
-              scroll:       &mut usize)
+fn handle_key(key:               char,
+              active:            &mut bool,
+              comcfg:            &ComCfg,
+              content_lines_len: usize,
+              cmdline:           &mut String,
+              cmdmode:           &mut bool,
+              feedback:          &mut Option<String>,
+              scroll_limit:      usize,
+              scroll:            &mut usize)
 {
 	if *cmdmode {
 		if key == common::SIGINT || key == common::SIGTSTP {
 			*cmdmode = false;
 		} else if key == comcfg.keys.cmdenter {
-			*feedback = handle_cmd(cmdline, active);
+			*feedback = handle_cmd(active,
+			                       cmdline,
+			                       content_lines_len,
+			                       scroll);
 			*cmdmode = false;
 		} else {
 			cmdline.push(key);
@@ -129,7 +131,7 @@ fn main()
 	let mut active = true;
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
-	let mut content = Vec::<String>::new();
+	let mut content_lines = Vec::<String>::new();
 	let mut content_height: usize;
 	let mut feedback: Option<String> = None;
 	let mut header_lines = Vec::<String>::new();
@@ -151,7 +153,7 @@ fn main()
 		(term_w, term_h) = termion::terminal_size().unwrap();
 		if term_w_old != term_w {
 			// TODO temp val
-			content = split_by_lines("\
+			content_lines = split_by_lines("\
 test\n\
 test\n\
 test\n\
@@ -259,7 +261,7 @@ test\n", term_w);
 		draw_content(content_height,
 		             &comcfg,
 		             &coucfg,
-		             &content,
+		             &content_lines,
 		             scroll);
 
 		draw_lower(&comcfg,
@@ -278,10 +280,11 @@ test\n", term_w);
 		handle_key(input[0] as char,
 		           &mut active,
 		           &comcfg,
+		           content_lines.len(),
 		           &mut cmdline,
 		           &mut cmdmode,
 		           &mut feedback,
-		           content.len() - content_height,
+		           content_lines.len() - content_height,
 		           &mut scroll);
 	}
 }
