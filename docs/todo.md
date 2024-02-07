@@ -45,18 +45,11 @@
 + courier: add draw_lower
 + courier: add cmdline
 
-- replace smug-ass over-abstracted termion::HideCursor nonsense with a simple
-  function, so i can get my work done
++ courier: add content needed_lines awareness
   
-  I feel like hiding the cursor prevents me from detecting it, so i just wanted
-  to termion::cursor::Restore it but this shit isn't easy.
-  Even though all that **should** happen in the background is a simple
-  CSI-sequence print.
-  Adding courier's content needed_lines awareness depends on it.
-   
-- courier: add content needed_lines awareness
-  
-  This is for limiting the lines that can be printed at once.
+This is for limiting the lines that can be printed at once.
+
+- hui: add needed_lines awareness for entries
 
 - courier: add scroll
 - courier: add read file argument
@@ -66,6 +59,11 @@
 - hui: fix Unrecognised command not clearing cmdline
 - feedback needed_lines detection probably doesn't account for the cmdline
   prefix
+
+- replace smug-ass over-abstracted termion::HideCursor nonsense with a simple
+  function, so i can get my work done
+  
+  Doesn't cause detect_cursor issues but still ugly and over engineered.
 
 - update matches to comply with code_style
 

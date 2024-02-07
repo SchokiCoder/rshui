@@ -12,7 +12,6 @@ use common::config::ComCfg;
 use std::io::{Read, Write};
 use std::process::Command;
 use termion::{clear, cursor};
-use termion::cursor::{HideCursor};
 use termion::raw::{IntoRawMode, RawTerminal};
 
 fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>)
@@ -227,26 +226,35 @@ fn main()
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
 	let mut feedback: Option<String> = None;
+	let mut header_lines = Vec::<String>::new();
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
-	let mut stdout: HideCursor<RawTerminal<std::io::Stdout>>;
-	let mut term_w: u16;
+	let mut stdout: RawTerminal<std::io::Stdout>;
+	let mut term_w: u16 = 0;
+	let mut term_w_old: u16;
 	let mut term_h: u16;
+	let mut title_lines = Vec::<String>::new();
 	let mut menu_path: Vec<String> = vec!["main".to_string()];
 
-	stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
+	stdout = std::io::stdout().into_raw_mode().unwrap();
 	stdin = std::io::stdin();
 	
 	while active {
 		let cur_menu = &huicfg.menus[&menu_path[menu_path.len() - 1]];
 
+		term_w_old = term_w;
 		(term_w, term_h) = termion::terminal_size().unwrap();
+		if term_w_old != term_w {
+			// TODO temp val
+			header_lines = split_by_lines(&huicfg.header, term_w);
+			title_lines = split_by_lines(&cur_menu.title, term_w);
+		}
 
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
-		draw_upper(&comcfg, &huicfg.header, &cur_menu.title);
+		draw_upper(&comcfg, &header_lines, &title_lines);
 		draw_menu(&cur_menu, &comcfg, &huicfg, cursor);
 		draw_lower(&comcfg,
 			   &cmdline,

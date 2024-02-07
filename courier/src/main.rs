@@ -9,7 +9,6 @@ use common::*;
 use common::config::ComCfg;
 use std::io::{Read, Write};
 use termion::{clear, cursor};
-use termion::cursor::{DetectCursorPos, HideCursor};
 use termion::raw::{IntoRawMode};
 
 fn draw_content(comcfg: &ComCfg,
@@ -112,37 +111,132 @@ fn main()
 	let mut cmdmode: bool = false;
 	let mut content = Vec::<String>::new();
 	let mut feedback: Option<String> = None;
+	let mut header_lines = Vec::<String>::new();
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
 	let mut term_w: u16 = 0;
-	let mut term_h: u16;
 	let mut term_w_old: u16;
-	let mut term_y: u16;
+	let mut term_h: u16;
+	let mut title_lines = Vec::<String>::new();
 
 	stdin = std::io::stdin();
-	let mut stdout = HideCursor::from(std::io::stdout().into_raw_mode().unwrap());
+	let mut stdout = std::io::stdout().into_raw_mode().unwrap();
+	// TODO temp val
 	title = "Your ad could be here, for now!".to_string();
 
 	while active {
 		term_w_old = term_w;
 		(term_w, term_h) = termion::terminal_size().unwrap();
 		if term_w_old != term_w {
-			content = split_by_lines("test1\ntest2\ntest3\n", term_w);
+			// TODO temp val
+			content = split_by_lines("\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test1\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n\
+test\n", term_w);
+			header_lines = split_by_lines(&coucfg.header, term_w);
+			title_lines = split_by_lines(&title, term_w);
 		}
 
 		print!("{}", clear::All);
 		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
-		draw_upper(&comcfg, &coucfg.header, &title);
+		draw_upper(&comcfg, &header_lines, &title_lines);
 
-		term_y = stdout.cursor_pos()
-		               .expect("Couldn't get cursor position")
-		               .1;
 		draw_content(&comcfg,
 		             &coucfg,
 		             &content,
-		             term_h - term_y - 1 - 1);
+		             term_h -
+		             header_lines.len() as u16 -
+		             title_lines.len() as u16 -
+		             1 - 1);
 
 		draw_lower(&comcfg,
 			   &cmdline,

@@ -71,21 +71,27 @@ pub fn draw_lower(comcfg: &ComCfg,
 	}
 }
 
-pub fn draw_upper(comcfg: &ComCfg, header: &str, title: &str)
+pub fn draw_upper(comcfg: &ComCfg,
+                  header_lines: &Vec<String>,
+                  title_lines: &Vec<String>)
 {
-	print!("{}{}{}{}{}\n",
-	       comcfg.colors.header.fg,
-	       comcfg.colors.header.bg,
-	       header,
-	       comcfg.colors.std.fg,
-	       comcfg.colors.std.bg);
+	for line in header_lines {
+		print!("{}{}{}{}{}\n",
+		       comcfg.colors.header.fg,
+		       comcfg.colors.header.bg,
+		       line,
+		       comcfg.colors.std.fg,
+		       comcfg.colors.std.bg);
+	}
 
-	print!("{}{}{}{}{}\n",
-	       comcfg.colors.title.fg,
-	       comcfg.colors.title.bg,
-	       title,
-	       comcfg.colors.std.fg,
-	       comcfg.colors.std.bg);
+	for line in title_lines {
+		print!("{}{}{}{}{}\n",
+		       comcfg.colors.title.fg,
+		       comcfg.colors.title.bg,
+		       line,
+		       comcfg.colors.std.fg,
+		       comcfg.colors.std.bg);
+	}
 }
 
 pub fn split_by_lines(s: &str, line_width: u16) -> Vec<String>
