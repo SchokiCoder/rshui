@@ -7,6 +7,8 @@ use crate::config::CouCfg;
 
 use common::*;
 use common::config::ComCfg;
+use std::env;
+use std::fs;
 use std::io::{Read, Write};
 use termion::{clear, cursor};
 use termion::raw::{IntoRawMode};
@@ -122,9 +124,53 @@ fn handle_key(key:               char,
 	}
 }
 
+#[must_use]
+fn parse_args() -> String /* content */ {
+	let filepath: String;
+	
+	let mut args: env::Args;
+	let mut f:    fs::File;
+	let mut ret = String::new();
+
+	args = env::args();
+	
+	if args.len() <= 1 {
+		// TODO
+		panic!("TODO implement piping");
+	}
+	
+	filepath = match args.nth(1) {
+	Some(tmp) => tmp,
+	None => {
+		panic!("Filepath argument doesn't exist");
+	}};
+	
+	
+	let result = fs::File::open(&filepath);
+	f = match result {
+	Ok(f) => {
+		f
+	}
+	
+	Err(_) => {
+		panic!("Could not open file \"{}\"", filepath);
+	}};
+	
+	let result = f.read_to_string(&mut ret);
+	match result {
+	Ok(_) => {}
+	
+	Err(_) => {
+		panic!("Could not read file \"{}\"", filepath);
+	}}
+	
+	return ret;
+}
+
 fn main()
 {
 	let comcfg = ComCfg::from_file();
+	let content: String;
 	let coucfg = CouCfg::from_file();
 	let title: String;
 
@@ -143,6 +189,7 @@ fn main()
 	let mut term_h: u16;
 	let mut title_lines = Vec::<String>::new();
 
+	content = parse_args();
 	stdin = std::io::stdin();
 	let mut stdout = std::io::stdout().into_raw_mode().unwrap();
 	// TODO temp val
@@ -152,98 +199,7 @@ fn main()
 		term_w_old = term_w;
 		(term_w, term_h) = termion::terminal_size().unwrap();
 		if term_w_old != term_w {
-			// TODO temp val
-			content_lines = split_by_lines("\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test1\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n\
-test\n", term_w);
+			content_lines = split_by_lines(&content, term_w);
 			header_lines = split_by_lines(&coucfg.header, term_w);
 			title_lines = split_by_lines(&title, term_w);
 		}
