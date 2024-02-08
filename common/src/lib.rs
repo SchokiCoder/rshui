@@ -5,7 +5,7 @@ pub mod color;
 pub mod config;
 
 use crate::config::ComCfg;
-use termion::cursor::DetectCursorPos;
+use termion::cursor;
 
 pub const SIGINT:  char = '\x03';
 pub const SIGTSTP: char = '\x04';
@@ -38,19 +38,10 @@ pub fn draw_lower(comcfg: &ComCfg,
 	      cmdline: &String,
               cmdmode: &bool,
               feedback: &Option<String>,
-              stdout: &mut termion::raw::RawTerminal<std::io::Stdout>,
               term_w: u16,
               term_h: u16)
 {
-	let y: u16;
-
-	stdout.activate_raw_mode().unwrap();
-	(_, y) = stdout.cursor_pos().unwrap();
-	stdout.suspend_raw_mode().unwrap();
-
-	for _ in y..term_h {
-		print!("\n");
-	}
+	print!("{}", cursor::Goto(1, term_h));
 	
 	print!("{}{}:{}{}",
 	       comcfg.colors.feedback.fg,
@@ -74,6 +65,8 @@ pub fn draw_upper(comcfg: &ComCfg,
                   header_lines: &Vec<String>,
                   title_lines: &Vec<String>)
 {
+	print!("{}", cursor::Goto(1, 1));
+
 	for line in header_lines {
 		print!("{}{}{}{}{}\n",
 		       comcfg.colors.header.fg,

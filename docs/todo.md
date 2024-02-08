@@ -81,8 +81,18 @@ This was a dumb hack to begin with.
 So rather, Unix-like L.
 
 + hui: fix not clearing cmdline when unrecognised command entered
+
++ hui: fix one case of entry execution failure not giving feedback
+
+Also minor code cleanup.
+
+- global: does feedback need to be Option<String>?
+  Maybe just use an empty string "" for that? 
+
 - feedback needed_lines detection probably doesn't account for the cmdline
   prefix
+
+- fix SIGINT and SIGTSTP in cmdmode not clearing cmdline
 
 - add hide and show cursor
   (via simple sequence print)
@@ -94,6 +104,11 @@ So rather, Unix-like L.
   thing from the config.
   Using the Shell enum but giving something like vi, will freeze the terminal
   until SIGTERM.
+
+- can piping maybe be done via C ffi?
+- if piping couldn't be done, add to goal_omissions
+
+- set version
 
 # v0.2.0
 

@@ -50,6 +50,14 @@ content = {Shell = "cc"}
 caption = "vi ~/temp"
 content = {ShellSession = "vi ~/temp"}
 
+[[menus.test_chamber.entries]]
+caption = "print 80"
+content = {Shell = "echo loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong"}
+
+[[menus.test_chamber.entries]]
+caption = "print 81"
+content = {Shell = "echo looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong"}
+
 [menus.main]
 title = """
 Main Menu

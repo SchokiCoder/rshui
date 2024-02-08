@@ -10,7 +10,7 @@ use common::config::ComCfg;
 use std::env;
 use std::fs;
 use std::io::{Read, Write};
-use termion::{clear, cursor};
+use termion::{clear};
 use termion::raw::{IntoRawMode};
 
 fn draw_content(content_height: usize,
@@ -249,7 +249,6 @@ fn main()
 		                 1 - 1;
 
 		print!("{}", clear::All);
-		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
 		draw_upper(&comcfg, &header_lines, &title_lines);
@@ -264,14 +263,13 @@ fn main()
 			   &cmdline,
 			   &cmdmode,
 			   &feedback,
-			   &mut stdout,
 			   term_w,
 			   term_h);
 		
-		stdout.flush().expect("stdout flush failed");
+		stdout.flush().expect("Stdout flush failed");
 		stdout.activate_raw_mode().unwrap();
 		
-		stdin.read_exact(&mut input).expect("keyboard read failed");
+		stdin.read_exact(&mut input).expect("Keyboard read failed");
 
 		handle_key(input[0] as char,
 		           &mut active,

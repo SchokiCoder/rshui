@@ -11,7 +11,7 @@ use common::*;
 use common::config::ComCfg;
 use std::io::{Read, Write};
 use std::process::Command;
-use termion::{clear, cursor};
+use termion::{clear};
 use termion::raw::{IntoRawMode, RawTerminal};
 
 fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>)
@@ -192,42 +192,49 @@ fn handle_key(key:       char,
 			*cursor = 0;
 		}
 	} else if key == huicfg.keys.execute {
-		match &cur_menu.entries[*cursor].content {
-		EntryContent::Shell(cmdstr) => {
-			let cresult = Command::new("sh")
-			                      .arg("-c")
-			                      .arg(cmdstr)
-			                      .output();
-
-			*feedback = cmdoutput_to_feedback(cresult);
-		}
-
-		EntryContent::ShellSession(cmdstr) => {
-			let cmdspawn = Command::new("sh")
-			                       .stdout(std::io::stdout())
-			                       .arg("-c")
-			                       .arg(cmdstr)
-			                       .spawn();
-			match cmdspawn {
-			Ok(child) => {
-				match child.wait_with_output() {
-				Ok(_) => {}
-				Err(_) => {
-					Some("Couldn't run child process.".to_string());
-				}}
-			}
-
-			Err(_) => {
-				*feedback = Some("Couldn't spawn child process.".to_string());
-			}}
-		}
-
-		_ => {}
-		}
+		handle_entry_execution(&cur_menu.entries[*cursor].content,
+		                       feedback);
 	} else if key == comcfg.keys.cmdmode {
 		if *cmdmode == false {
 			*cmdmode = true;
 		}
+	}
+}
+
+fn handle_entry_execution(entry_content: &EntryContent,
+                          feedback:      &mut Option<String>)
+{
+	match entry_content {
+	EntryContent::Shell(cmdstr) => {
+		let cresult = Command::new("sh")
+		                      .arg("-c")
+		                      .arg(cmdstr)
+		                      .output();
+
+		*feedback = cmdoutput_to_feedback(cresult);
+	}
+
+	EntryContent::ShellSession(cmdstr) => {
+		let cmdspawn = Command::new("sh")
+		                       .stdout(std::io::stdout())
+		                       .arg("-c")
+		                       .arg(cmdstr)
+		                       .spawn();
+		match cmdspawn {
+		Ok(child) => {
+			match child.wait_with_output() {
+			Ok(_) => {}
+			Err(_) => {
+				*feedback = Some("Couldn't run child process.".to_string());
+			}}
+		}
+
+		Err(_) => {
+			*feedback = Some("Couldn't spawn child process.".to_string());
+		}}
+	}
+
+	_ => {}
 	}
 }
 
@@ -261,7 +268,6 @@ fn main()
 		term_w_old = term_w;
 		(term_w, term_h) = termion::terminal_size().unwrap();
 		if term_w_old != term_w {
-			// TODO temp val
 			header_lines = split_by_lines(&huicfg.header, term_w);
 			title_lines = split_by_lines(&cur_menu.title, term_w);
 		}
@@ -271,7 +277,6 @@ fn main()
 		                 1 - 1;
 
 		print!("{}", clear::All);
-		print!("{}", cursor::Goto(1, 1));
 		stdout.suspend_raw_mode().unwrap();
 
 		draw_upper(&comcfg, &header_lines, &title_lines);
@@ -284,14 +289,13 @@ fn main()
 			   &cmdline,
 			   &cmdmode,
 			   &feedback,
-			   &mut stdout,
 			   term_w,
 			   term_h);
 		
-		stdout.flush().expect("stdout flush failed");
+		stdout.flush().expect("Stdout flush failed");
 		stdout.activate_raw_mode().unwrap();
 
-		stdin.read_exact(&mut input).expect("keyboard read failed");
+		stdin.read_exact(&mut input).expect("Keyboard read failed");
 		handle_key(input[0] as char,
 		           &mut active,
 		           &comcfg,
