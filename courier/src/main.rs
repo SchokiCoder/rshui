@@ -56,8 +56,25 @@ fn get_content(filepath: Option<String>) -> String {
 	},
 	
 	None => {
-		// TODO
-		panic!("TODO implement piping");
+		panic!("No filepath given and piping currently not supported");
+		/*
+		match stdin.read_to_string(&mut ret) {
+		Ok(_) => {
+			let result = fs::File::open("/dev/tty");
+			let new_stdin = match result {
+			Ok(val) => {val}
+
+			Err(_) => {
+				panic!("Cannot reopen stdin");
+			}};
+
+			*stdin = Stdin::from_raw_fd(new_stdin.as_raw_fd());
+			return ret;
+		}
+		Err(_) => {
+			panic!("Stdin could not be read");
+		}}
+		*/
 	}};
 
 	let result = fs::File::open(&fp);
@@ -162,23 +179,17 @@ fn handle_key(key:               char,
 
 #[must_use]
 fn parse_args() -> (String, String) /* title, content */ {
-	let args: env::Args;
 	let ret_content: String;
 
+	let mut args: env::Args;
 	let mut filepath: Option<String> = None;
 	let mut next_is_title = false;
 	let mut ret_title = String::new();
 
 	args = env::args();
 
+	args.next();
 	for arg in args {
-		/*let arg = match args.nth(i) {
-		Some(val) => val,
-		
-		None => {
-			continue;
-		}};*/
-
 		match arg.as_ref() {
 		"-t" | "--title" => {
 			next_is_title = true;

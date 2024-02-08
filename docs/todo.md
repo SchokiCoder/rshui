@@ -68,7 +68,16 @@ Also minor code readability improvement for both hui and courier.
   I have swapped args.nth(i) with arg in args and it just works.
   Conclusion: the rust std library can be cursed sometimes.
 
-- courier: add content piping
++ courier: fix using the first arg (path to executable) in parse_args
++ FAILED: courier: add content piping
+
+I cannot reopen stdin from "dev/tty" like in the C version.
+io::Stdin doesn't implement FromRawFd and the struct values are private.
+I am literally gatekept from just tossing a filedesc at the stdin struct and
+calling it a day.
+Rust Std Library L.
+I can not actually blame them.
+This was a dumb hack to begin with.
 
 - hui: fix Unrecognised command not clearing cmdline
 - feedback needed_lines detection probably doesn't account for the cmdline
