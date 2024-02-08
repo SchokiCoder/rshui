@@ -78,15 +78,14 @@ calling it a day.
 Rust Std Library L.
 I can not actually blame them.
 This was a dumb hack to begin with.
+So rather, Unix-like L.
 
-- hui: fix Unrecognised command not clearing cmdline
++ hui: fix not clearing cmdline when unrecognised command entered
 - feedback needed_lines detection probably doesn't account for the cmdline
   prefix
 
-- replace smug-ass over-abstracted termion::HideCursor nonsense with a simple
-  function, so i can get my work done
-  
-  Doesn't cause detect_cursor issues but still ugly and over engineered.
+- add hide and show cursor
+  (via simple sequence print)
 
 - give hui multiline feedback to courier
 

@@ -107,6 +107,8 @@ fn handle_cmd(cmdline: &mut String,
 {
 	let cur_menu: &Menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
 
+	let mut ret: Option<String> = None;
+
 	match cmdline as &str {
 	"q" | "quit" | "exit" => {
 		*active = false;
@@ -125,13 +127,13 @@ fn handle_cmd(cmdline: &mut String,
 		}
 
 		Err(_) => {
-			return Some(format!("Command \"{}\" not recognised",
-			                    cmdline));
+			ret = Some(format!("Command \"{}\" not recognised",
+			                   cmdline));
 		}}
 	}}
 	
 	cmdline.clear();
-	return None;
+	return ret;
 }
 
 fn handle_key(key:       char,
