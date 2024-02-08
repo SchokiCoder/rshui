@@ -82,7 +82,7 @@ pub fn draw_upper(comcfg: &ComCfg,
 		       comcfg.colors.std.fg,
 		       comcfg.colors.std.bg);
 	}
-
+	
 	for line in title_lines {
 		print!("{}{}{}{}{}\n",
 		       comcfg.colors.title.fg,

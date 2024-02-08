@@ -161,21 +161,41 @@ fn handle_key(key:               char,
 }
 
 #[must_use]
-fn parse_args() -> String /* content */ {	
-	let mut args: env::Args;
+fn parse_args() -> (String, String) /* title, content */ {
+	let args: env::Args;
+	let ret_content: String;
+
 	let mut filepath: Option<String> = None;
+	let mut next_is_title = false;
+	let mut ret_title = String::new();
 
 	args = env::args();
-	
-	if args.len() > 1 {
-		filepath = match args.nth(1) {
-		Some(tmp) => Some(tmp),
+
+	for arg in args {
+		/*let arg = match args.nth(i) {
+		Some(val) => val,
+		
 		None => {
-			panic!("Filepath argument doesn't exist");
-		}};
+			continue;
+		}};*/
+
+		match arg.as_ref() {
+		"-t" | "--title" => {
+			next_is_title = true;
+		}
+
+		_ => {
+			if next_is_title == true {
+				ret_title = arg;
+				next_is_title = false;
+			} else {
+				filepath = Some(arg);
+			}
+		}}
 	}
-	
-	return get_content(filepath);
+
+	ret_content = get_content(filepath);
+	return (ret_title, ret_content);
 }
 
 fn main()
@@ -200,11 +220,9 @@ fn main()
 	let mut term_h: u16;
 	let mut title_lines = Vec::<String>::new();
 
-	content = parse_args();
+	(title, content) = parse_args();
 	stdin = std::io::stdin();
 	let mut stdout = std::io::stdout().into_raw_mode().unwrap();
-	// TODO temp val
-	title = "Your ad could be here, for now!".to_string();
 
 	while active {
 		term_w_old = term_w;

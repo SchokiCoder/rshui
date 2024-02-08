@@ -61,7 +61,13 @@ Also minor code readability improvement for both hui and courier.
 
 + courier: add scroll via entered cmdline number
 + courier: add read file argument
-- courier: add optional title argument
++ courier: add optional title argument
+  the next argument after "-t" is a None?
+  EVERYTHING after the 1st arg is a None?!
+  Causes `courier -t title file` to not recognise filepath nor title.
+  I have swapped args.nth(i) with arg in args and it just works.
+  Conclusion: the rust std library can be cursed sometimes.
+
 - courier: add content piping
 
 - hui: fix Unrecognised command not clearing cmdline
