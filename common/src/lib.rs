@@ -10,26 +10,17 @@ use termion::cursor;
 pub const SIGINT:  char = '\x03';
 pub const SIGTSTP: char = '\x04';
 
-pub fn draw_feedback(feedback: &Option<String>, comcfg: &ComCfg, term_w: u16)
+pub fn draw_feedback(feedback: &mut String, comcfg: &ComCfg, term_w: u16)
 {
-	let fb_str = match feedback {
-	Some(x) => {
-		x
-	}
-	
-	None => {
-		return;
-	}};
-
-	let fb_str = fb_str.trim_end();
-	if split_by_lines(fb_str, term_w).len() != 1 {
+	*feedback = feedback.trim_end().to_string();
+	if split_by_lines(feedback, term_w).len() != 1 {
 		return;
 	}
 
 	print!("{}{}{}{}{}",
 	       comcfg.colors.feedback.fg,
 	       comcfg.colors.feedback.bg,
-	       fb_str,
+	       feedback,
 	       comcfg.colors.std.fg,
 	       comcfg.colors.std.bg);
 }
@@ -37,7 +28,7 @@ pub fn draw_feedback(feedback: &Option<String>, comcfg: &ComCfg, term_w: u16)
 pub fn draw_lower(comcfg: &ComCfg,
 	      cmdline: &String,
               cmdmode: &bool,
-              feedback: &Option<String>,
+              feedback: &mut String,
               term_w: u16,
               term_h: u16)
 {

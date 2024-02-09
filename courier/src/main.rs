@@ -103,9 +103,9 @@ fn handle_cmd(active:            &mut bool,
               cmdline:           &mut String,
               content_lines_len: usize,
               scroll:            &mut usize)
-              -> Option<String> // feedback is returned
+              -> String // feedback
 {
-	let mut ret: Option<String> = None;
+	let mut ret = String::new();
 	
 	match cmdline as &str {
 	"q" | "quit" | "exit" => {
@@ -125,8 +125,7 @@ fn handle_cmd(active:            &mut bool,
 		}
 
 		Err(_) => {
-			ret = Some(format!("Command \"{}\" not recognised",
-			                   cmdline));
+			ret = format!("Command \"{}\" not recognised", cmdline);
 		}}
 	}}
 	
@@ -140,7 +139,7 @@ fn handle_key(key:               char,
               content_lines_len: usize,
               cmdline:           &mut String,
               cmdmode:           &mut bool,
-              feedback:          &mut Option<String>,
+              feedback:          &mut String,
               scroll_limit:      usize,
               scroll:            &mut usize)
 {
@@ -221,7 +220,7 @@ fn main()
 	let mut cmdmode: bool = false;
 	let mut content_lines = Vec::<String>::new();
 	let mut content_height: usize;
-	let mut feedback: Option<String> = None;
+	let mut feedback = String::new();
 	let mut header_lines = Vec::<String>::new();
 	let mut input: [u8; 1] = [0];
 	let mut scroll: usize = 0;
@@ -262,7 +261,7 @@ fn main()
 		draw_lower(&comcfg,
 			   &cmdline,
 			   &cmdmode,
-			   &feedback,
+			   &mut feedback,
 			   term_w,
 			   term_h);
 		

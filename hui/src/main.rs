@@ -15,19 +15,19 @@ use termion::{clear};
 use termion::raw::{IntoRawMode, RawTerminal};
 
 fn cmdoutput_to_feedback(cmdoutput: Result<std::process::Output, std::io::Error>)
-                         -> Option<String>
+                         -> String // feedback
 {
 	return match cmdoutput {
 	Ok(output) => {
 		if output.stderr.len() > 0 {
-			Some(String::from_utf8(output.stderr).unwrap())
+			String::from_utf8(output.stderr).unwrap()
 		} else {
-			Some(String::from_utf8(output.stdout).unwrap())
+			String::from_utf8(output.stdout).unwrap()
 		}
 	}
 
 	Err(e) => {
-		Some(format!("Command output could not be retrieved: {}", e))
+		format!("Command output could not be retrieved: {}", e)
 	}}
 }
 
@@ -103,11 +103,11 @@ fn handle_cmd(cmdline: &mut String,
               cfg: &HuiCfg,
               cursor: &mut usize,
               menu_path: &mut Vec<String>)
-              -> Option<String> // feedback is returned
+              -> String // feedback is returned
 {
 	let cur_menu: &Menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
 
-	let mut ret: Option<String> = None;
+	let mut ret = String::new();
 
 	match cmdline as &str {
 	"q" | "quit" | "exit" => {
@@ -127,8 +127,7 @@ fn handle_cmd(cmdline: &mut String,
 		}
 
 		Err(_) => {
-			ret = Some(format!("Command \"{}\" not recognised",
-			                   cmdline));
+			ret = format!("Command \"{}\" not recognised", cmdline);
 		}}
 	}}
 	
@@ -143,7 +142,7 @@ fn handle_key(key:       char,
               cmdline:   &mut String,
               cmdmode:   &mut bool,
               cursor:    &mut usize,
-              feedback:  &mut Option<String>,
+              feedback:  &mut String,
               menu_path: &mut Vec<String>)
 {
 	let cur_menu = &huicfg.menus[&menu_path[menu_path.len() - 1]];
@@ -192,8 +191,7 @@ fn handle_key(key:       char,
 			*cursor = 0;
 		}
 	} else if key == huicfg.keys.execute {
-		handle_entry_execution(&cur_menu.entries[*cursor].content,
-		                       feedback);
+		*feedback = handle_entry_execution(&cur_menu.entries[*cursor].content);
 	} else if key == comcfg.keys.cmdmode {
 		if *cmdmode == false {
 			*cmdmode = true;
@@ -201,9 +199,10 @@ fn handle_key(key:       char,
 	}
 }
 
-fn handle_entry_execution(entry_content: &EntryContent,
-                          feedback:      &mut Option<String>)
+fn handle_entry_execution(entry_content: &EntryContent) -> String // feedback
 {
+	let mut ret = String::new();
+
 	match entry_content {
 	EntryContent::Shell(cmdstr) => {
 		let cresult = Command::new("sh")
@@ -211,7 +210,7 @@ fn handle_entry_execution(entry_content: &EntryContent,
 		                      .arg(cmdstr)
 		                      .output();
 
-		*feedback = cmdoutput_to_feedback(cresult);
+		ret = cmdoutput_to_feedback(cresult);
 	}
 
 	EntryContent::ShellSession(cmdstr) => {
@@ -225,17 +224,19 @@ fn handle_entry_execution(entry_content: &EntryContent,
 			match child.wait_with_output() {
 			Ok(_) => {}
 			Err(_) => {
-				*feedback = Some("Couldn't run child process.".to_string());
+				ret = "Couldn't run child process.".to_string();
 			}}
 		}
 
 		Err(_) => {
-			*feedback = Some("Couldn't spawn child process.".to_string());
+			ret = "Couldn't spawn child process.".to_string();
 		}}
 	}
 
 	_ => {}
 	}
+
+	return ret;
 }
 
 fn main()
@@ -248,7 +249,7 @@ fn main()
 	let mut cmdline: String = String::new();
 	let mut cmdmode: bool = false;
 	let mut content_height: usize;
-	let mut feedback: Option<String> = None;
+	let mut feedback = String::new();
 	let mut header_lines = Vec::<String>::new();
 	let mut input: [u8; 1] = [0];
 	let mut stdin: std::io::Stdin;
@@ -288,7 +289,7 @@ fn main()
 		draw_lower(&comcfg,
 			   &cmdline,
 			   &cmdmode,
-			   &feedback,
+			   &mut feedback,
 			   term_w,
 			   term_h);
 		

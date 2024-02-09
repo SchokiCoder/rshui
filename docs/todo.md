@@ -86,8 +86,10 @@ So rather, Unix-like L.
 
 Also minor code cleanup.
 
-- global: does feedback need to be Option<String>?
-  Maybe just use an empty string "" for that? 
++ replace feedback's type: Option<String> with String
+
+This only makes the code simpler and better to read.
+There is no difference here between None and String of zero len.
 
 - feedback needed_lines detection probably doesn't account for the cmdline
   prefix
