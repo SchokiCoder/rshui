@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2023 - 2024  Andy Frank Schoknecht
 
+use crate::menu::*;
 use common::color::TextColor;
 use common::config::{read_cfg_file};
+
 use serde::Deserialize;
 use std::collections::HashMap;
-
-use crate::menu::*;
 
 const PATH_CFGPOSTFIX_HUI: &str = "hui.toml";
 

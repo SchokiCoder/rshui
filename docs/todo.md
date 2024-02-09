@@ -91,15 +91,19 @@ Also minor code cleanup.
 This only makes the code simpler and better to read.
 There is no difference here between None and String of zero len.
 
-- feedback needed_lines detection probably doesn't account for the cmdline
-  prefix
++ update code style regarding the use keyword
 
+- fix feedback needed_lines detection doesn't account for the cmdline prefix
 - fix SIGINT and SIGTSTP in cmdmode not clearing cmdline
 
 - add hide and show cursor
   (via simple sequence print)
 
+- use XDG env vars for cfg path?
+
 - give hui multiline feedback to courier
+
+- add configurable cmdline and feedback prefix
 
 - Maybe the ShellSession execution part can be modified to feasibly cover normal
   Shell execution, thus making it possible to remove the ShellSession vs Shell

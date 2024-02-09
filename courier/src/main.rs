@@ -4,9 +4,9 @@
 mod config;
 
 use crate::config::CouCfg;
-
 use common::*;
 use common::config::ComCfg;
+
 use std::env;
 use std::fs;
 use std::io::{Read, Write};

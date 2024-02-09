@@ -6,9 +6,9 @@ mod menu;
 
 use crate::config::HuiCfg;
 use crate::menu::*;
-
 use common::*;
 use common::config::ComCfg;
+
 use std::io::{Read, Write};
 use std::process::Command;
 use termion::{clear};

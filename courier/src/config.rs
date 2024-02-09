@@ -3,6 +3,7 @@
 
 use common::color::TextColor;
 use common::config::{read_cfg_file};
+
 use serde::Deserialize;
 
 const PATH_CFGPOSTFIX_COU: &str = "courier.toml";

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 // Copyright (C) 2023 - 2024  Andy Frank Schoknecht
 
+use crate::color::*;
+
 use serde::Deserialize;
 use std::io::Read;
 use std::fs::File;
 use std::path::Path;
-
-use crate::color::*;
 
 const PATH_CFGPOSTFIX_COMMON: &str = "common.toml";
 const PATHS_CFG: &'static [&'static str] = &[

@@ -157,7 +157,9 @@ is no room for a function within the function.
 In Rust we use `use` and actual code import happen via `mod` but that only
 matters for local files.  
 In the file `mod`'s are listed before any `use`'s.  
-Both are to be done in alphabetical order.
+Both are to be done in alphabetical order with `crate::` modules first,
+other workspace modules second and external modules last.  
+Seperate `use` of external modules and workspace modules with a newline.  
 
 # other Rust stuff
 

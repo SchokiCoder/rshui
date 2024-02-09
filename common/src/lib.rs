@@ -5,6 +5,7 @@ pub mod color;
 pub mod config;
 
 use crate::config::ComCfg;
+
 use termion::cursor;
 
 pub const SIGINT:  char = '\x03';
