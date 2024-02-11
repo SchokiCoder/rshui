@@ -46,7 +46,8 @@ fn draw_content(content_height: usize,
 }
 
 #[must_use]
-fn get_content(filepath: Option<String>) -> String {
+fn get_content(filepath: Option<String>) -> String
+{
 	let mut f:    fs::File;
 	let mut ret = String::new();
 
@@ -100,7 +101,7 @@ fn get_content(filepath: Option<String>) -> String {
 
 #[must_use]
 fn handle_cmd(active:            &mut bool,
-              cmdline:           &mut String,
+              cmdline:           &String,
               content_lines_len: usize,
               scroll:            &mut usize)
               -> String // feedback
@@ -128,8 +129,7 @@ fn handle_cmd(active:            &mut bool,
 			ret = format!("Command \"{}\" not recognised", cmdline);
 		}}
 	}}
-	
-	cmdline.clear();
+
 	return ret;
 }
 
@@ -144,18 +144,14 @@ fn handle_key(key:               char,
               scroll:            &mut usize)
 {
 	if *cmdmode {
-		if key == common::SIGINT || key == common::SIGTSTP {
-			*cmdmode = false;
-		} else if key == comcfg.keys.cmdenter {
-			*feedback = handle_cmd(active,
-			                       cmdline,
-			                       content_lines_len,
-			                       scroll);
-			*cmdmode = false;
-		} else {
-			cmdline.push(key);
-		}
-		
+		*cmdline = handle_key_cmdmode(key,
+		                              active,
+		                              comcfg,
+		                              content_lines_len,
+		                              cmdline,
+		                              cmdmode,
+		                              feedback,
+		                              scroll);
 		return;
 	}
 	
@@ -177,7 +173,38 @@ fn handle_key(key:               char,
 }
 
 #[must_use]
-fn parse_args() -> (String, String) /* title, content */ {
+fn handle_key_cmdmode(key:               char,
+                      active:            &mut bool,
+                      comcfg:            &ComCfg,
+                      content_lines_len: usize,
+                      cmdline:           &String,
+                      cmdmode:           &mut bool,
+                      feedback:          &mut String,
+                      scroll:            &mut usize)
+                      -> String // cmdline
+{
+	let ret: String;
+
+	if key == common::SIGINT || key == common::SIGTSTP {
+		*cmdmode = false;
+		ret = String::new();
+	} else if key == comcfg.keys.cmdenter {
+		*feedback = handle_cmd(active,
+		                       cmdline,
+		                       content_lines_len,
+		                       scroll);
+		ret = String::new();
+		*cmdmode = false;
+	} else {
+		ret = format!("{}{}", *cmdline, key)
+	}
+
+	return ret;
+}
+
+#[must_use]
+fn parse_args() -> (String, String) /* title, content */
+{
 	let ret_content: String;
 
 	let mut args: env::Args;

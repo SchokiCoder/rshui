@@ -93,8 +93,17 @@ There is no difference here between None and String of zero len.
 
 + update code style regarding the use keyword
 
++ fix SIGINT and SIGTSTP in cmdmode not clearing cmdline
+
+This also comes with some cleanup work.
+
+- unnecessary check for cmdline entered ints being over 0
+  make entry/line selection begin with 0
+
+- courier: fix int overflow
+  `content_lines.len() - content_height,` as arg for `handle_key`
+
 - fix feedback needed_lines detection doesn't account for the cmdline prefix
-- fix SIGINT and SIGTSTP in cmdmode not clearing cmdline
 
 - add hide and show cursor
   (via simple sequence print)

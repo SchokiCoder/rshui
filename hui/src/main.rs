@@ -98,14 +98,14 @@ fn draw_menu(content_height: usize,
 }
 
 #[must_use]
-fn handle_cmd(cmdline: &mut String,
-              active: &mut bool,
-              cfg: &HuiCfg,
+fn handle_cmd(active: &mut bool,
+              cmdline: &String,
               cursor: &mut usize,
-              menu_path: &mut Vec<String>)
+              huicfg: &HuiCfg,
+              menu_path: &Vec<String>)
               -> String // feedback is returned
 {
-	let cur_menu: &Menu = &cfg.menus[&menu_path[menu_path.len() - 1]];
+	let cur_menu: &Menu = &huicfg.menus[&menu_path[menu_path.len() - 1]];
 
 	let mut ret = String::new();
 
@@ -130,73 +130,8 @@ fn handle_cmd(cmdline: &mut String,
 			ret = format!("Command \"{}\" not recognised", cmdline);
 		}}
 	}}
-	
-	cmdline.clear();
+
 	return ret;
-}
-
-fn handle_key(key:       char,
-              active:    &mut bool,
-              comcfg:    &ComCfg,
-              huicfg:    &HuiCfg,
-              cmdline:   &mut String,
-              cmdmode:   &mut bool,
-              cursor:    &mut usize,
-              feedback:  &mut String,
-              menu_path: &mut Vec<String>)
-{
-	let cur_menu = &huicfg.menus[&menu_path[menu_path.len() - 1]];
-
-	if *cmdmode {
-		if key == common::SIGINT || key == common::SIGTSTP {
-			*cmdmode = false;
-		} else if key == comcfg.keys.cmdenter {
-			*feedback = handle_cmd(cmdline,
-			                       active,
-			                       huicfg,
-			                       cursor,
-			                       menu_path);
-			*cmdmode = false;
-		} else {
-			cmdline.push(key);
-		}
-		
-		return;
-	}
-
-	if key == common::SIGINT ||
-	   key == common::SIGTSTP ||
-	   key == comcfg.keys.quit {
-		*active = false;
-	} else if key == comcfg.keys.down {
-		if *cursor < (cur_menu.entries.len() - 1) {
-			*cursor += 1;
-		}
-	} else if key == comcfg.keys.up {
-		if *cursor > 0 {
-			*cursor -= 1;
-		}
-	} else if key == comcfg.keys.right {
-		match &cur_menu.entries[*cursor].content {
-		EntryContent::Menu(m) => {
-			menu_path.push(m.to_string());
-			*cursor = 0;
-		}
-		
-		_ => {}
-		}
-	} else if key == comcfg.keys.left {
-		if menu_path.len() > 1 {
-			menu_path.pop();
-			*cursor = 0;
-		}
-	} else if key == huicfg.keys.execute {
-		*feedback = handle_entry_execution(&cur_menu.entries[*cursor].content);
-	} else if key == comcfg.keys.cmdmode {
-		if *cmdmode == false {
-			*cmdmode = true;
-		}
-	}
 }
 
 fn handle_entry_execution(entry_content: &EntryContent) -> String // feedback
@@ -236,6 +171,98 @@ fn handle_entry_execution(entry_content: &EntryContent) -> String // feedback
 	_ => {}
 	}
 
+	return ret;
+}
+
+fn handle_key(key:       char,
+              active:    &mut bool,
+              cmdline:   &mut String,
+              cmdmode:   &mut bool,
+              comcfg:    &ComCfg,
+              cursor:    &mut usize,
+              feedback:  &mut String,
+              huicfg:    &HuiCfg,
+              menu_path: &mut Vec<String>)
+{
+	let cur_menu = &huicfg.menus[&menu_path[menu_path.len() - 1]];
+
+	if *cmdmode {
+		*cmdline = handle_key_cmdmode(key,
+		                              active,
+		                              cmdline,
+		                              cmdmode,
+		                              comcfg,
+		                              cursor,
+		                              feedback,
+		                              huicfg,
+		                              menu_path);
+		return;
+	}
+
+	if key == common::SIGINT ||
+	   key == common::SIGTSTP ||
+	   key == comcfg.keys.quit {
+		*active = false;
+	} else if key == comcfg.keys.down {
+		if *cursor < (cur_menu.entries.len() - 1) {
+			*cursor += 1;
+		}
+	} else if key == comcfg.keys.up {
+		if *cursor > 0 {
+			*cursor -= 1;
+		}
+	} else if key == comcfg.keys.right {
+		match &cur_menu.entries[*cursor].content {
+		EntryContent::Menu(m) => {
+			menu_path.push(m.to_string());
+			*cursor = 0;
+		}
+		
+		_ => {}
+		}
+	} else if key == comcfg.keys.left {
+		if menu_path.len() > 1 {
+			menu_path.pop();
+			*cursor = 0;
+		}
+	} else if key == huicfg.keys.execute {
+		*feedback = handle_entry_execution(&cur_menu.entries[*cursor].content);
+	} else if key == comcfg.keys.cmdmode {
+		if *cmdmode == false {
+			*cmdmode = true;
+		}
+	}
+}
+
+#[must_use]
+fn handle_key_cmdmode(key:               char,
+                      active:            &mut bool,
+                      cmdline:           &String,
+                      cmdmode:           &mut bool,
+                      comcfg:            &ComCfg,
+                      cursor:            &mut usize,
+                      feedback:          &mut String,
+                      huicfg:            &HuiCfg,
+                      menu_path:         &Vec<String>)
+                      -> String // cmdline
+{
+	let ret: String;
+
+	if key == common::SIGINT || key == common::SIGTSTP {
+		*cmdmode = false;
+		ret = String::new();
+	} else if key == comcfg.keys.cmdenter {
+		*feedback = handle_cmd(active,
+		                       cmdline,
+		                       cursor,
+		                       huicfg,
+		                       menu_path);
+		ret = String::new();
+		*cmdmode = false;
+	} else {
+		ret = format!("{}{}", *cmdline, key)
+	}
+	
 	return ret;
 }
 
@@ -299,12 +326,12 @@ fn main()
 		stdin.read_exact(&mut input).expect("Keyboard read failed");
 		handle_key(input[0] as char,
 		           &mut active,
-		           &comcfg,
-		           &huicfg,
 		           &mut cmdline,
 		           &mut cmdmode,
+		           &comcfg,
 		           &mut cursor,
 		           &mut feedback,
+		           &huicfg,
 		           &mut menu_path);
 	}
 }
