@@ -297,6 +297,12 @@ fn main()
 		
 		stdin.read_exact(&mut input).expect("Keyboard read failed");
 
+		let scroll_limit = if content_lines.len() < content_height {
+			0
+		} else {
+			content_lines.len() - content_height
+		};
+		
 		handle_key(input[0] as char,
 		           &mut active,
 		           &comcfg,
@@ -304,7 +310,7 @@ fn main()
 		           &mut cmdline,
 		           &mut cmdmode,
 		           &mut feedback,
-		           content_lines.len() - content_height,
+		           scroll_limit,
 		           &mut scroll);
 	}
 }

@@ -97,11 +97,11 @@ There is no difference here between None and String of zero len.
 
 This also comes with some cleanup work.
 
++ courier: fix int overflow when calculating scroll_limit
+  (`content_lines.len() - content_height,` as arg for `handle_key`)
+
 - unnecessary check for cmdline entered ints being over 0
   make entry/line selection begin with 0
-
-- courier: fix int overflow
-  `content_lines.len() - content_height,` as arg for `handle_key`
 
 - fix feedback needed_lines detection doesn't account for the cmdline prefix
 
@@ -109,8 +109,6 @@ This also comes with some cleanup work.
   (via simple sequence print)
 
 - use XDG env vars for cfg path?
-
-- give hui multiline feedback to courier
 
 - add configurable cmdline and feedback prefix
 
@@ -120,8 +118,16 @@ This also comes with some cleanup work.
   Using the Shell enum but giving something like vi, will freeze the terminal
   until SIGTERM.
 
-- can piping maybe be done via C ffi?
-- if piping couldn't be done, add to goal_omissions
+## piping issue
+
+- don't do piping, just create a tempfile `docs.rs/mktemp`
+- call courier with that path
+- release tempfile ownership
+- done, no old hacks, no bs
+- improve the "no piping" message in courier when piping is tried
+  from "No filepath given and piping currently not supported"
+  to   "No filepath given and piping is not supported, instead use a tempfile"
+- give hui multiline feedback to courier
 
 - set version
 
