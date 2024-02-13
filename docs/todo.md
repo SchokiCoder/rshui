@@ -100,13 +100,16 @@ This also comes with some cleanup work.
 + courier: fix int overflow when calculating scroll_limit
   (`content_lines.len() - content_height,` as arg for `handle_key`)
 
-- unnecessary check for cmdline entered ints being over 0
-  make entry/line selection begin with 0
++ remove offset of 1 for content/entry jump via cmdline
 
 - fix feedback needed_lines detection doesn't account for the cmdline prefix
 
 - add hide and show cursor
   (via simple sequence print)
+
+- courier: fix questionable line cuts?
+  (1 character is cut on lines too long)
+  this may also mess with content_lines_len
 
 - use XDG env vars for cfg path?
 

@@ -116,12 +116,10 @@ fn handle_cmd(active:            &mut bool,
 	_ => {
 		match usize::from_str_radix(cmdline.as_ref(), 10) {
 		Ok(num) => {
-			if num > 0 {
-				if num > content_lines_len {
-					*scroll = content_lines_len - 1;
-				} else {
-					*scroll = num - 1;
-				}
+			if num >= content_lines_len {
+				*scroll = content_lines_len - 1;
+			} else {
+				*scroll = num;
 			}
 		}
 

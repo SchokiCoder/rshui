@@ -117,12 +117,10 @@ fn handle_cmd(active: &mut bool,
 	_ => {
 		match usize::from_str_radix(cmdline.as_ref(), 10) {
 		Ok(num) => {
-			if num > 0 {
-				if num > cur_menu.entries.len() {
-					*cursor = cur_menu.entries.len() - 1;
-				} else {
-					*cursor = num - 1;
-				}
+			if num >= cur_menu.entries.len() {
+				*cursor = cur_menu.entries.len() - 1;
+			} else {
+				*cursor = num;
 			}
 		}
 
