@@ -102,7 +102,9 @@ This also comes with some cleanup work.
 
 + remove offset of 1 for content/entry jump via cmdline
 
-- fix feedback needed_lines detection doesn't account for the cmdline prefix
++ add configurable cmdline and feedback prefix
+
+Also fix feedback needed_lines detection doesn't account for the cmdline prefix.
 
 - add hide and show cursor
   (via simple sequence print)
@@ -112,8 +114,6 @@ This also comes with some cleanup work.
   this may also mess with content_lines_len
 
 - use XDG env vars for cfg path?
-
-- add configurable cmdline and feedback prefix
 
 - Maybe the ShellSession execution part can be modified to feasibly cover normal
   Shell execution, thus making it possible to remove the ShellSession vs Shell

@@ -38,6 +38,9 @@ pub struct CfgColors {
 
 #[derive(Deserialize)]
 pub struct ComCfg {	
+	pub cmdline_prefix: String,
+	pub feedback_prefix: String,
+	
 	pub keys: CfgKeys,
 	
 	pub colors: CfgColors,

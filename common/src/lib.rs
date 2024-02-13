@@ -11,45 +11,44 @@ use termion::cursor;
 pub const SIGINT:  char = '\x03';
 pub const SIGTSTP: char = '\x04';
 
-pub fn draw_feedback(feedback: &mut String, comcfg: &ComCfg, term_w: u16)
+pub fn draw_feedback(comcfg: &ComCfg, content: &String, term_w: u16)
 {
-	*feedback = feedback.trim_end().to_string();
-	if split_by_lines(feedback, term_w).len() != 1 {
+	if split_by_lines(content, term_w).len() != 1 {
 		return;
 	}
 
 	print!("{}{}{}{}{}",
 	       comcfg.colors.feedback.fg,
 	       comcfg.colors.feedback.bg,
-	       feedback,
+	       content,
 	       comcfg.colors.std.fg,
 	       comcfg.colors.std.bg);
 }
 
 pub fn draw_lower(comcfg: &ComCfg,
-	      cmdline: &String,
-              cmdmode: &bool,
-              feedback: &mut String,
-              term_w: u16,
-              term_h: u16)
+                  cmdline: &String,
+                  cmdmode: &bool,
+                  feedback: &mut String,
+                  term_w: u16,
+                  term_h: u16)
 {
 	print!("{}", cursor::Goto(1, term_h));
-	
-	print!("{}{}:{}{}",
-	       comcfg.colors.feedback.fg,
-	       comcfg.colors.feedback.bg,
-	       comcfg.colors.std.fg,
-	       comcfg.colors.std.bg);
 
 	if *cmdmode {
-		print!("{}{}{}{}{}",
+		print!("{}{}{}{}{}{}",
 		       comcfg.colors.cmdline.fg,
 		       comcfg.colors.cmdline.bg,
+		       comcfg.cmdline_prefix,
 		       cmdline,
 		       comcfg.colors.std.fg,
 		       comcfg.colors.std.bg);
 	} else {
-		draw_feedback(feedback, comcfg, term_w);
+		let content: String;
+
+		*feedback = feedback.trim_end().to_string();
+		content = format!("{}{}", comcfg.feedback_prefix, feedback);
+		
+		draw_feedback(comcfg, &content, term_w);
 	}
 }
 
