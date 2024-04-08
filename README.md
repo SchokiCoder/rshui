@@ -11,8 +11,9 @@ QQ  QQQQQQ
 4P  4QQQQP
 ```
 
-# What is this
+# What is this?
 
+A **cancelled** Rust rewrite of [hui](https://github.com/SchokiCoder/hui).  
 A customizable terminal user-interface for common tasks and personal tastes,
 inspired by suckless software.  
 You can create TUI menus in a config file and then deploy it to your user.  
@@ -43,15 +44,3 @@ Courier is the pager that also lives here, because they share a lot of code so
 they can look and feel similar.  
 If you don't wish to have "courier", edit
 [install.sh](https://github.com/SchokiCoder/rshui/blob/main/install.sh).  
-
-# Contributing
-
-If you wish to do that, follow these steps to make it convenient for both of us:  
-
-- have a look at docs/todo.md to see short term goals
-- have a look at docs/goals.md to see long term goals
-- create a fork on GitHub
-- commit your changes
-- create a pull request on GitHub
-
-Thank you and have fun.  
